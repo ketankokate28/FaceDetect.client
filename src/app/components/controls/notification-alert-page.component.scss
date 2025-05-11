@@ -1,0 +1,62 @@
+input.form-control {
+  border-left-width: 5px;
+}
+
+.control-box {
+  margin-bottom: 5px;
+}
+
+.search-box {
+  margin: 0;
+}
+
+.nav-item.toolbaritem a {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  min-width: 100px;
+  font-weight: bold;
+}
+::ng-deep .datatable-header .datatable-row-center .datatable-header-cell.frozen {
+  background-color: #343a40 !important;
+  color: #fff !important;
+}
+::ng-deep .datatable-header .datatable-header-cell:first-child {
+  background-color: #343a40 !important;
+  color: #fff !important;
+}
+::ng-deep .datatable-header-inner {
+  background-color: #343a40;
+}
+::ng-deep .datatable-header,
+::ng-deep .datatable-header .datatable-header-cell,
+::ng-deep .datatable-header .datatable-header-cell.frozen {
+  background-color: #343a40 !important;
+  color: #ffffff !important;
+}
+
+.completed {
+  text-decoration: line-through;
+}
+
+.form-check {
+  margin: 0;
+}
+
+
+.inline-label {
+  width: 100%;
+  min-height: 1rem;
+  display: inline-block;
+}
+
+.inline-editor {
+  width: 100%;
+}
+
+.description-form-group {
+  margin-bottom: 5px;
+}
+
+.hr-separator {
+  margin: 10px 0;
+}

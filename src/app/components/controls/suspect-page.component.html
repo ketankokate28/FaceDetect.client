@@ -1,0 +1,252 @@
+<div class="row control-box">
+  <div class="col-lg-8">
+    <div class="search-box">
+      <app-search-box (searchChange)="onSearchChanged($event)" placeholder="{{'Search' | translate}}" />
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <ul class="nav flex-row">
+      <li class="nav-item toolbaritem">
+        <a class="nav-link" href="javascript:;" (click)="addSuspect()">
+          <i class="fa fa-plus"></i> {{'Add Suspect' | translate}}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<div style="overflow-x: auto;">
+  <ngx-datatable
+    class="material colored-header sm table-hover"
+    [loadingIndicator]="loadingIndicator"
+    [rows]="rows"
+    [rowHeight]="35"
+    [headerHeight]="37"
+    [footerHeight]="35"
+    [columnMode]="'force'"
+    [scrollbarH]="true"
+    [reorderable]="false"
+    [scrollbarV]="true"
+    style="width: 100%; min-width: 1000px;">
+
+    <ngx-datatable-column name="First Name" prop="firstName" [frozenLeft]="true">
+      <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+        <a href="javascript:void(0)" (click)="editSuspect(row)">
+          {{ value }}
+        </a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Last Name" prop="lastName"></ngx-datatable-column>
+    <ngx-datatable-column name="Date of Birth" prop="dateOfBirth"></ngx-datatable-column>
+    <ngx-datatable-column name="Gender" prop="gender"></ngx-datatable-column>
+    <ngx-datatable-column name="Nationality" prop="nationality"></ngx-datatable-column>
+    <ngx-datatable-column name="Height (cm)" prop="heightCm"></ngx-datatable-column>
+    <ngx-datatable-column name="Weight (kg)" prop="weightKg"></ngx-datatable-column>
+    <ngx-datatable-column name="Eye Color" prop="eyeColor"></ngx-datatable-column>
+    <ngx-datatable-column name="Hair Color" prop="hairColor"></ngx-datatable-column>
+
+    <ngx-datatable-column name="shoulder Width (Cm)" prop="shoulderWidthCm"></ngx-datatable-column> 
+    <ngx-datatable-column name="Torso Height (Cm)" prop="torsoHeightCm"></ngx-datatable-column>
+    <ngx-datatable-column name="Leg Length (Cm)" prop="legLengthCm"></ngx-datatable-column>
+    <ngx-datatable-column name="Shoe Size" prop="shoeSize"></ngx-datatable-column>
+
+
+    <ngx-datatable-column name="description" prop="description"></ngx-datatable-column>
+    <ngx-datatable-column name="Aliases" prop="aliases"></ngx-datatable-column>
+    <ngx-datatable-column name="Image" [sortable]="false">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <i
+          *ngIf="row.file_blob_base64 && row.id"
+          class="fa fa-eye"
+          style="cursor: pointer; color: #007bff;"
+          (click)="viewImage(row.file_blob_base64)"
+          title="View Image"
+        ></i>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+</div>
+
+<ng-template #editorModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      {{ suspectEdit?.id ? ('Edit Suspect' | translate) : ('Add Suspect' | translate) }}
+    </h5>
+    <button type="button" class="btn-close" (click)="modal.close()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form #f="ngForm" (ngSubmit)="saveSuspect()" novalidate>
+      <div class="row">
+        <!-- First Name -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" class="form-control" [(ngModel)]="suspectEdit.firstName" name="firstName" required>
+          </div>
+        </div>
+  
+        <!-- Last Name -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" class="form-control" [(ngModel)]="suspectEdit.lastName" name="lastName" required>
+          </div>
+        </div>
+  
+        <!-- Date of Birth -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="dateOfBirth">Date of Birth</label>
+            <input type="date" id="dateOfBirth" class="form-control" [(ngModel)]="suspectEdit.dateOfBirth" name="dateOfBirth" required>
+          </div>
+        </div>
+  
+        <!-- Gender -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="gender">Gender</label>
+            <select id="gender" class="form-control" [(ngModel)]="suspectEdit.gender" name="gender" required>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+  
+        <!-- Nationality -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="nationality">Nationality</label>
+            <input type="text" id="nationality" class="form-control" [(ngModel)]="suspectEdit.nationality" name="nationality" required>
+          </div>
+        </div>
+  
+        <!-- Height (cm) -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="heightCm">Height (cm)</label>
+            <input type="number" id="heightCm" class="form-control" [(ngModel)]="suspectEdit.heightCm" name="heightCm" required>
+          </div>
+        </div>
+  
+        <!-- Weight (kg) -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="weightKg">Weight (kg)</label>
+            <input type="number" id="weightKg" class="form-control" [(ngModel)]="suspectEdit.weightKg" name="weightKg" required>
+          </div>
+        </div>
+  
+        <!-- Eye Color -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="eyeColor">Eye Color</label>
+            <input type="text" id="eyeColor" class="form-control" [(ngModel)]="suspectEdit.eyeColor" name="eyeColor">
+          </div>
+        </div>
+  
+        <!-- Hair Color -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="hairColor">Hair Color</label>
+            <input type="text" id="hairColor" class="form-control" [(ngModel)]="suspectEdit.hairColor" name="hairColor">
+          </div>
+        </div>
+  
+        <!-- Distinguishing Marks -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="aliases">Aliases </label>
+            <input type="text" id="aliases" class="form-control" [(ngModel)]="suspectEdit.aliases" name="aliases">
+          </div>
+        </div>
+  
+        <!-- DNA Profile -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="shoulderWidthCm">Shoulder Width (Cm)</label>
+            <input type="text" id="shoulderWidthCm" class="form-control" [(ngModel)]="suspectEdit.shoulderWidthCm" name="shoulderWidthCm">
+          </div>
+        </div>
+  
+        <!--Torso Height  -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="torsoHeightCm">Torso Height (Cm)</label>
+            <input type="text"  id="torsoHeightCm" class="form-control" [(ngModel)]="suspectEdit.torsoHeightCm" name="torsoHeightCm">
+          </div>
+        </div>
+  
+        <!-- Iris Scan -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="legLengthCm">Leg Length (Cm) </label>
+            <input type="text"  id="legLengthCm" class="form-control" [(ngModel)]="suspectEdit.legLengthCm" name="legLengthCm">
+          </div>
+        </div>
+  
+        <!-- Facial Features -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="shoeSize">Shoe Size</label>
+            <input type="text"  id="shoeSize" class="form-control" [(ngModel)]="suspectEdit.shoeSize" name="shoeSize">
+          </div>
+        </div>
+  
+        <!-- Gait Analysis -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="description">description</label>
+            <input type="text"  id="description" class="form-control" [(ngModel)]="suspectEdit.description" name="description">
+          </div>
+        </div>
+  
+        <!-- Image Upload -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="image">Image</label>
+            <div class="d-flex align-items-center">
+              <input type="file" id="image" (change)="handleImageUpload($event)" class="form-control me-2">
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                *ngIf="previewImage"
+                (click)="openImagePreview()"
+                title="View Image"
+                [disabled]="!previewImage"> <!-- Disable if no previewImage -->
+                <i class="fa fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" [disabled]="!f.form.valid">
+      {{ suspectEdit?.id ? ('Update Suspect' | translate) : ('Add Suspect' | translate) }}
+    </button>
+  
+    <button *ngIf="suspectEdit?.id" type="button" class="btn btn-danger" (click)="confirmDelete(modal)">
+      {{ 'Delete Suspect' | translate }}
+    </button>
+  
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+  
+  
+    </form>
+  </div>
+  <ng-template #imagePreviewModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Suspect Image</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body text-center">
+      <img *ngIf="previewImage" [src]="previewImage" class="img-fluid" alt="Suspect Image">
+    </div>
+  </ng-template>

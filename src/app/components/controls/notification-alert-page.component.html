@@ -1,0 +1,71 @@
+<div class="row control-box">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center">
+        <!-- Search Box -->
+        <div class="flex-grow-1">
+          <app-search-box
+            (searchChange)="filterDatatable($event)"
+            placeholder="{{ 'Search' | translate }}"
+          ></app-search-box>
+        </div>
+  
+        <!-- Refresh Button -->
+        <button class="btn btn-outline-secondary ms-2" (click)="fetchNotificationAlerts()">
+          <i class="fa fa-refresh"></i> {{ 'Refresh' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div style="overflow-x: auto;">
+    <ngx-datatable
+      class="material colored-header sm table-hover"
+      [rows]="filteredNotificationAlerts"
+      [rowHeight]="35"
+      [headerHeight]="37"
+      [footerHeight]="35"
+      [columnMode]="'force'"
+      [scrollbarH]="true"
+      [reorderable]="false"
+      [scrollbarV]="true"
+      style="width: 100%; min-width: 1000px;"
+    >
+  
+      <ngx-datatable-column name="ID" prop="notification_id" [frozenLeft]="true">
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          <a href="javascript:void(0)" (click)="editNotificationAlert(row)">
+            {{ value }}
+          </a>
+        </ng-template>
+      </ngx-datatable-column>
+  
+      <ngx-datatable-column name="Channel" prop="channel"></ngx-datatable-column>
+      <ngx-datatable-column name="CCTV ID" prop="cctv_id"></ngx-datatable-column>
+      <ngx-datatable-column name="Match ID" prop="match_id"></ngx-datatable-column>
+      <ngx-datatable-column name="Payload" prop="payload"></ngx-datatable-column>
+      <ngx-datatable-column name="Recipient" prop="recipient"></ngx-datatable-column>
+      <ngx-datatable-column name="Created At" prop="created_at">
+        <ng-template let-row="row" ngx-datatable-cell>{{ row.created_at | date: 'short' }}</ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Last Attempt" prop="last_attempt_at">
+        <ng-template let-row="row" ngx-datatable-cell>{{ row.last_attempt_at | date: 'short' }}</ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Attempt Count" prop="attempt_count"></ngx-datatable-column>
+      <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
+      <ngx-datatable-column name="Last Error" prop="last_error"></ngx-datatable-column>
+  
+      <ngx-datatable-column name="Actions">
+        <ng-template let-row="row" ngx-datatable-cell>
+          <button class="btn btn-sm btn-primary me-1" (click)="editNotificationAlert(row)">
+            {{ 'COMMON.EDIT' | translate }}
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteNotificationAlert(row)">
+            {{ 'COMMON.DELETE' | translate }}
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+  
+    </ngx-datatable>
+  </div>
+  
