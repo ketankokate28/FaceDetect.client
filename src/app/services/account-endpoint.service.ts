@@ -11,6 +11,7 @@ import { catchError } from 'rxjs/operators';
 
 import { EndpointBase } from './endpoint-base.service';
 import { ConfigurationService } from './configuration.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,17 +20,20 @@ export class AccountEndpoint extends EndpointBase {
   private http = inject(HttpClient);
   private configurations = inject(ConfigurationService);
 
-  get usersUrl() { return this.configurations.baseUrl + '/api/account/users'; }
-  get userByUserNameUrl() { return this.configurations.baseUrl + '/api/account/users/username'; }
-  get currentUserUrl() { return this.configurations.baseUrl + '/api/account/users/me'; }
+  get usersUrl() { return this.configurations.baseUrl + '/users/'; }
+  get userByUserNameUrl() { return this.configurations.baseUrl + '/users/'; }
+  get currentUserUrl() { return this.configurations.baseUrl + '/users/1/'; }
   get currentUserPreferencesUrl() { return this.configurations.baseUrl + '/api/account/users/me/preferences'; }
   get unblockUserUrl() { return this.configurations.baseUrl + '/api/account/users/unblock'; }
-  get rolesUrl() { return this.configurations.baseUrl + '/api/account/roles'; }
+  get rolesUrl() { return this.configurations.baseUrl + '/roles/'; }
   get roleByRoleNameUrl() { return this.configurations.baseUrl + '/api/account/roles/name'; }
-  get permissionsUrl() { return this.configurations.baseUrl + '/api/account/permissions'; }
+  get permissionsUrl() { return this.configurations.baseUrl + '/permissions/'; }
 
   getUserEndpoint<T>(userId?: string): Observable<T> {
-    const endpointUrl = userId ? `${this.usersUrl}/${userId}` : this.currentUserUrl;
+    if(userId ==undefined)
+    userId =this.getUserId();
+
+    const endpointUrl = userId ? `${this.usersUrl}${userId}` : this.currentUserUrl;
 
     return this.http.get<T>(endpointUrl, this.requestHeaders).pipe(
       catchError(error => {
@@ -63,7 +67,7 @@ export class AccountEndpoint extends EndpointBase {
   }
 
   getUpdateUserEndpoint<T>(user: object, userId?: string): Observable<T> {
-    const endpointUrl = userId ? `${this.usersUrl}/${userId}` : this.currentUserUrl;
+    const endpointUrl = userId ? `${this.usersUrl}${userId}` : this.currentUserUrl;
 
     return this.http.put<T>(endpointUrl, JSON.stringify(user), this.requestHeaders).pipe(
       catchError(error => {
@@ -115,15 +119,12 @@ export class AccountEndpoint extends EndpointBase {
       }));
   }
 
-  getDeleteUserEndpoint<T>(userId: string): Observable<T> {
-    const endpointUrl = `${this.usersUrl}/${userId}`;
-
+  getDeleteUserEndpoint<T>(userId: string | number): Observable<T> {
+    const endpointUrl = `${this.usersUrl}${userId}`;
     return this.http.delete<T>(endpointUrl, this.requestHeaders).pipe(
-      catchError(error => {
-        return this.handleError(error, () => this.getDeleteUserEndpoint<T>(userId));
-      }));
+      catchError(error => this.handleError(error, () => this.getDeleteUserEndpoint<T>(userId)))
+    );
   }
-
 
   getRoleEndpoint<T>(roleId: string): Observable<T> {
     const endpointUrl = `${this.rolesUrl}/${roleId}`;
@@ -144,7 +145,7 @@ export class AccountEndpoint extends EndpointBase {
   }
 
   getRolesEndpoint<T>(page?: number, pageSize?: number): Observable<T> {
-    const endpointUrl = page && pageSize ? `${this.rolesUrl}/${page}/${pageSize}` : this.rolesUrl;
+    const endpointUrl = page && pageSize ? `${this.rolesUrl}${page}/${pageSize}` : this.rolesUrl;
 
     return this.http.get<T>(endpointUrl, this.requestHeaders).pipe(
       catchError(error => {
@@ -160,7 +161,7 @@ export class AccountEndpoint extends EndpointBase {
   }
 
   getUpdateRoleEndpoint<T>(role: object, roleId: string): Observable<T> {
-    const endpointUrl = `${this.rolesUrl}/${roleId}`;
+    const endpointUrl = `${this.rolesUrl}${roleId}`;
 
     return this.http.put<T>(endpointUrl, JSON.stringify(role), this.requestHeaders).pipe(
       catchError(error => {

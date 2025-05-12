@@ -13,11 +13,11 @@ export class AppErrorHandler extends ErrorHandler {
   }
 
   override handleError(error: Error) {
-    if (confirm("Fatal Error!\nAn unresolved error has occurred. Do you want to reload the page to correct this?\n\n" +
-      `Error: ${error.message}`)) {
-      window.location.reload();
-    }
+    // if (confirm("Fatal Error!\nAn unresolved error has occurred. Do you want to reload the page to correct this?\n\n" +
+    //   `Error: ${error.message}`)) {
+    //   window.location.reload();
+    // }
 
-    super.handleError(error);
+    // super.handleError(error);
   }
 }

@@ -139,23 +139,23 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initNotificationsLoading() {
-    this.notificationsLoadingSubscription = this.notificationService.getNewNotificationsPeriodically()
-      .subscribe({
-        next: notifications => {
-          this.dataLoadingConsecutiveFailures = 0;
-          this.newNotificationCount = notifications.filter(n => !n.isRead).length;
-        },
-        error: error => {
-          this.alertService.logError(error);
+    // this.notificationsLoadingSubscription = this.notificationService.getNewNotificationsPeriodically()
+    //   .subscribe({
+    //     next: notifications => {
+    //       this.dataLoadingConsecutiveFailures = 0;
+    //       this.newNotificationCount = notifications.filter(n => !n.isRead).length;
+    //     },
+    //     error: error => {
+    //       this.alertService.logError(error);
 
-          if (this.dataLoadingConsecutiveFailures++ < 20) {
-            setTimeout(() => this.initNotificationsLoading(), 5000);
-          } else {
-            this.alertService.showStickyMessage(this.gT('app.alerts.LoadingError'),
-              this.gT('app.alerts.LoadingNewNotificationsFailed'), MessageSeverity.error);
-          }
-        }
-      });
+    //       if (this.dataLoadingConsecutiveFailures++ < 20) {
+    //         setTimeout(() => this.initNotificationsLoading(), 5000);
+    //       } else {
+    //         this.alertService.showStickyMessage(this.gT('app.alerts.LoadingError'),
+    //           this.gT('app.alerts.LoadingNewNotificationsFailed'), MessageSeverity.error);
+    //       }
+    //     }
+    //   });
   }
 
   markNotificationsAsRead() {
@@ -307,6 +307,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   get userName(): string {
     return this.authService.currentUser?.userName ?? '';
+  }
+
+  get useriD(): string {
+    return this.authService.currentUser?.id ?? '';
   }
 
   get fullName(): string {

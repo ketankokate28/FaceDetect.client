@@ -5,7 +5,7 @@
 // ---------------------------------------
 
 import { Injectable, inject } from '@angular/core';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Observable, Subject, forkJoin, throwError } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 
 import { AccountEndpoint } from './account-endpoint.service';
@@ -75,27 +75,35 @@ export class AccountService {
     return this.accountEndpoint.getUpdateUserPreferencesEndpoint(configuration);
   }
 
-  deleteUser(userOrUserId: string | User): Observable<User> {
-    if (typeof userOrUserId === 'string') {
-      return this.accountEndpoint.getDeleteUserEndpoint<User>(userOrUserId as string).pipe<User>(
-        tap(user => this.onRolesUserCountChanged(user.roles)));
-    } else {
+  deleteUser(userOrUserId: number | string | User): Observable<User> {
+    if (typeof userOrUserId === 'string' || typeof userOrUserId === 'number') {
+      const userIdStr = userOrUserId.toString();
+      return this.accountEndpoint.getDeleteUserEndpoint<User>(userIdStr).pipe(
+        tap(user => this.onRolesUserCountChanged(user.roles))
+      );
+    } else if (userOrUserId && typeof userOrUserId === 'object') {
       if (userOrUserId.id) {
         return this.deleteUser(userOrUserId.id);
-      } else {
-        return this.accountEndpoint.getUserByUserNameEndpoint<User>(userOrUserId.userName).pipe<User>(
-          mergeMap(user => this.deleteUser(user.id)));
+      } else if (userOrUserId.userName) {
+        return this.accountEndpoint.getUserByUserNameEndpoint<User>(userOrUserId.userName).pipe(
+          mergeMap(user => this.deleteUser(user.id))
+        );
       }
     }
+  
+    // 🔴 Final fallback return — makes TypeScript happy
+    return throwError(() => new Error('Invalid input to deleteUser'));
   }
+  
+  
 
   unblockUser(userId: string) {
     return this.accountEndpoint.getUnblockUserEndpoint(userId);
   }
 
   userHasPermission(permissionValue: PermissionValues): boolean {
-    //return this.permissions.some(p => p === permissionValue);
-    return true;
+    return this.permissions.some(p => p === permissionValue);
+    //return true;
   }
 
   refreshLoggedInUser() {

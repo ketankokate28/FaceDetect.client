@@ -341,12 +341,12 @@
       "RoleDetails": "Role Details \"{{name}}\"",
       "EditRole": "Edit Role \"{{name}}\"",
       "Name": "Name",
-      "Description": "Stream Url",
+      "Description": "Description",
       "Users": "Users"
     },
     "editor": {
       "Name": "Name:",
-      "Description": "Stream Url:",
+      "Description": "Description:",
       "RoleNameRequired": "Role name is required (minimum of 2 and maximum of 200 characters)",
       "SelectAll": "Select all",
       "SelectNone": "Select none",

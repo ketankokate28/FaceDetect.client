@@ -1,14 +1,6 @@
-// ---------------------------------------
-// Email: xyz@pqr.com
-// Templates: /templates
-// (c) 2024 /mit-license
-// ---------------------------------------
-
-import { Component, OnInit, TemplateRef, inject, viewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TableColumn, NgxDatatableModule } from '@siemens/ngx-datatable';
-import { TranslateModule } from '@ngx-translate/core';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { AlertService, DialogType, MessageSeverity } from '../../services/alert.service';
 import { AppTranslationService } from '../../services/app-translation.service';
@@ -20,163 +12,115 @@ import { Permissions } from '../../models/permission.model';
 import { UserEdit } from '../../models/user-edit.model';
 import { UserInfoComponent } from './user-info.component';
 import { SearchBoxComponent } from './search-box.component';
-
-interface UserIndex extends User {
-  index: number;
-}
+import { NgxDatatableModule } from '@siemens/ngx-datatable';
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-users-management',
   templateUrl: './users-management.component.html',
-  styleUrl: './users-management.component.scss',
-  imports: [SearchBoxComponent, NgxDatatableModule, UserInfoComponent, TranslateModule]
+  styleUrls: ['./users-management.component.scss'],
+  standalone: true,
+  imports: [
+    SearchBoxComponent,
+    NgxDatatableModule,
+    UserInfoComponent,           // ✅ Add this line
+    TranslateModule,
+    CommonModule
+  ]
 })
 export class UsersManagementComponent implements OnInit {
-  private alertService = inject(AlertService);
-  private translationService = inject(AppTranslationService);
-  private accountService = inject(AccountService);
-  private modalService = inject(NgbModal);
+  constructor(
+    private alertService: AlertService,
+    private translationService: AppTranslationService,
+    private accountService: AccountService,
+    private modalService: NgbModal
+  ) {}
 
-  columns: TableColumn[] = [];
+  columns: any[] = [];
   rows: User[] = [];
   rowsCache: User[] = [];
   editedUser: UserEdit | null = null;
   sourceUser: UserEdit | null = null;
   editingUserName: { name: string } | null = null;
   loadingIndicator = false;
-
   allRoles: Role[] = [];
 
-  readonly indexTemplate = viewChild.required<TemplateRef<unknown>>('indexTemplate');
+  @ViewChild('indexTemplate', { static: true }) indexTemplate!: TemplateRef<any>;
+  @ViewChild('userNameTemplate', { static: true }) userNameTemplate!: TemplateRef<any>;
+  @ViewChild('rolesTemplate', { static: true }) rolesTemplate!: TemplateRef<any>;
+  @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<any>;
+  @ViewChild('editorModal', { static: true }) editorModalTemplate!: TemplateRef<any>;
+  @ViewChild(UserInfoComponent) userEditor!: UserInfoComponent;
 
-  readonly userNameTemplate = viewChild.required<TemplateRef<unknown>>('userNameTemplate');
-
-  readonly rolesTemplate = viewChild.required<TemplateRef<unknown>>('rolesTemplate');
-
-  readonly actionsTemplate = viewChild.required<TemplateRef<unknown>>('actionsTemplate');
-
-  readonly editorModalTemplate = viewChild.required<TemplateRef<unknown>>('editorModal');
-
-  userEditor: UserInfoComponent | null = null;
-
-  ngOnInit() {
+  ngOnInit(): void {
     const gT = (key: string) => this.translationService.getTranslation(key);
 
     this.columns = [
-      { prop: 'index', name: '#', width: 40, cellTemplate: this.indexTemplate(), canAutoResize: false },
+      { prop: 'index', name: '#', width: 40, cellTemplate: this.indexTemplate, canAutoResize: false },
       { prop: 'jobTitle', name: gT('users.management.Title'), width: 50 },
-      { prop: 'userName', name: gT('users.management.UserName'), width: 90, cellTemplate: this.userNameTemplate() },
+      { prop: 'userName', name: gT('users.management.UserName'), width: 90, cellTemplate: this.userNameTemplate },
       { prop: 'fullName', name: gT('users.management.FullName'), width: 120 },
       { prop: 'email', name: gT('users.management.Email'), width: 140 },
-      { prop: 'roles', name: gT('users.management.Roles'), width: 120, cellTemplate: this.rolesTemplate() },
-      { prop: 'phoneNumber', name: gT('users.management.PhoneNumber'), width: 100 }
-    ];
-
-    if (this.canManageUsers) {
-      this.columns.push({
+      { prop: 'roles', name: gT('users.management.Roles'), width: 120, cellTemplate: this.rolesTemplate },
+      { prop: 'phoneNumber', name: gT('users.management.PhoneNumber'), width: 100 },
+      {
         name: '',
         width: 160,
-        cellTemplate: this.actionsTemplate(),
+        cellTemplate: this.actionsTemplate,
         resizeable: false,
         canAutoResize: false,
         sortable: false,
         draggable: false
-      });
-    }
+      }
+    ];
 
     this.loadData();
-  }
-
-  setUserEditorComponent(userEditor: UserInfoComponent) {
-    this.userEditor = userEditor;
-
-    if (this.sourceUser == null)
-      this.editedUser = this.userEditor.newUser(this.allRoles);
-    else
-      this.editedUser = this.userEditor.editUser(this.sourceUser, this.allRoles);
-  }
-
-  addNewUserToList() {
-    if (this.sourceUser) {
-      Object.assign(this.sourceUser, this.editedUser);
-
-      let sourceIndex = this.rowsCache.indexOf(this.sourceUser, 0);
-      if (sourceIndex > -1) {
-        Utilities.moveArrayItem(this.rowsCache, sourceIndex, 0);
-      }
-
-      sourceIndex = this.rows.indexOf(this.sourceUser, 0);
-      if (sourceIndex > -1) {
-        Utilities.moveArrayItem(this.rows, sourceIndex, 0);
-      }
-
-      this.editedUser = null;
-      this.sourceUser = null;
-    } else {
-      const user = new User();
-      Object.assign(user, this.editedUser);
-      this.editedUser = null;
-
-      let maxIndex = 0;
-      for (const u of this.rowsCache) {
-        if ((u as UserIndex).index > maxIndex) {
-          maxIndex = (u as UserIndex).index;
-        }
-      }
-
-      (user as UserIndex).index = maxIndex + 1;
-
-      this.rowsCache.splice(0, 0, user);
-      this.rows.splice(0, 0, user);
-      this.rows = [...this.rows];
-    }
   }
 
   loadData() {
     this.alertService.startLoadingMessage();
     this.loadingIndicator = true;
 
-    if (this.canViewRoles) {
-      this.accountService.getUsersAndRoles()
-        .subscribe({
-          next: results => this.onDataLoadSuccessful(results[0], results[1]),
-          error: error => this.onDataLoadFailed(error)
-        });
-    } else {
-      this.accountService.getUsers()
-        .subscribe({
-          next: users => this.onDataLoadSuccessful(users, this.accountService.currentUser?.roles.map(x => new Role(x)) ?? []),
-          error: error => this.onDataLoadFailed(error)
-        });
-    }
+    this.accountService.getUsersAndRoles().subscribe({
+      next: results => this.onDataLoadSuccessful(results[0], results[1]),
+      error: error => this.onDataLoadFailed(error)
+    });
   }
-
+  onSearchChanged(searchTerm: string) {
+    this.rows = this.rowsCache.filter(r =>
+      Utilities.searchArray(searchTerm, false, r.userName, r.fullName, r.email, r.phoneNumber, r.jobTitle, r.roles));
+  }
   onDataLoadSuccessful(users: User[], roles: Role[]) {
     this.alertService.stopLoadingMessage();
     this.loadingIndicator = false;
-
+  
     users.forEach((user, index) => {
       (user as UserIndex).index = index + 1;
+  
+      // Make sure roles is always an array
+      if (!Array.isArray(user.roles)) {
+        user.roles = [];
+      }
     });
-
+  
     this.rowsCache = [...users];
     this.rows = users;
-
+  
     this.allRoles = roles;
   }
+  
 
   onDataLoadFailed(error: HttpErrorResponse) {
     this.alertService.stopLoadingMessage();
     this.loadingIndicator = false;
 
-    this.alertService.showStickyMessage('Load Error',
+    this.alertService.showStickyMessage(
+      'Load Error',
       `Unable to retrieve users from the server.\r\nError: "${Utilities.getHttpResponseMessage(error)}"`,
-      MessageSeverity.error, error);
-  }
-
-  onSearchChanged(value: string) {
-    this.rows = this.rowsCache.filter(r =>
-      Utilities.searchArray(value, false, r.userName, r.fullName, r.email, r.phoneNumber, r.jobTitle, r.roles));
+      MessageSeverity.error,
+      error
+    );
   }
 
   newUser() {
@@ -190,16 +134,23 @@ export class UsersManagementComponent implements OnInit {
     this.sourceUser = row;
     this.openUserEditor();
   }
-
+  processRoles(value: any): string[] {
+    return Array.isArray(value) ? value : [];
+  }
   openUserEditor() {
-    const modalRef = this.modalService.open(this.editorModalTemplate(), {
+    const modalRef: NgbModalRef = this.modalService.open(this.editorModalTemplate, {
       size: 'lg',
       backdrop: 'static'
     });
 
-    modalRef.shown.subscribe(() => {
-      if (!this.userEditor)
-        throw new Error('The user editor component was not set.');
+    setTimeout(() => {
+      if (!this.userEditor) return;
+
+      if (this.sourceUser == null) {
+        this.editedUser = this.userEditor.newUser(this.allRoles);
+      } else {
+        this.editedUser = this.userEditor.editUser(this.sourceUser, this.allRoles);
+      }
 
       this.userEditor.changesSavedCallback = () => {
         this.addNewUserToList();
@@ -212,44 +163,69 @@ export class UsersManagementComponent implements OnInit {
         modalRef.close();
       };
     });
-
-    modalRef.hidden.subscribe(() => {
-      if (!this.userEditor)
-        throw new Error('The user editor component was not set.');
-
-      this.editingUserName = null;
-      this.userEditor.resetForm(true);
-      this.userEditor = null;
-    });
   }
 
+  addNewUserToList() {
+    if (!this.editedUser) return;
+  
+    const user = new User();
+    Object.assign(user, this.editedUser);
+  
+    if (this.sourceUser) {
+      // Update existing user
+      const index = this.rowsCache.findIndex(u => u.id === this.sourceUser?.id);
+      if (index !== -1) {
+        this.rowsCache[index] = user; // Update the user in cache
+        this.rows[index] = user; // Update the user in the table rows
+      }
+    } else {
+      // Add new user
+      this.rowsCache.unshift(user);
+      this.rows.unshift(user);
+    }
+  
+    this.rows = [...this.rows]; // Trigger a table update
+    this.editedUser = null;
+    this.sourceUser = null;
+  }
+  
+
   deleteUser(row: UserEdit) {
-    this.alertService.showDialog(`Are you sure you want to delete "${row.userName}"?`,
-      DialogType.confirm, () => this.deleteUserHelper(row));
+    this.alertService.showDialog(
+      `Are you sure you want to delete "${row.userName}"?`,
+      DialogType.confirm,
+      () => this.deleteUserHelper(row)
+    );
   }
 
   deleteUserHelper(row: UserEdit) {
     this.alertService.startLoadingMessage('Deleting...');
     this.loadingIndicator = true;
 
-    this.accountService.deleteUser(row)
-      .subscribe({
-        next: () => {
-          this.alertService.stopLoadingMessage();
-          this.loadingIndicator = false;
+    this.accountService.deleteUser(row).subscribe({
+      next: () => {
+        this.alertService.stopLoadingMessage();
+        this.loadingIndicator = false;
 
-          this.rowsCache = this.rowsCache.filter(item => item !== row);
-          this.rows = this.rows.filter(item => item !== row);
-        },
-        error: error => {
-          this.alertService.stopLoadingMessage();
-          this.loadingIndicator = false;
+        this.rowsCache = this.rowsCache.filter(item => item !== row);
+        this.rows = this.rows.filter(item => item !== row);
+      },
+      error: error => {
+        this.alertService.stopLoadingMessage();
+        this.loadingIndicator = false;
 
-          this.alertService.showStickyMessage('Delete Error',
-            `An error occurred whilst deleting the user.\r\nError: "${Utilities.getHttpResponseMessage(error)}"`,
-            MessageSeverity.error, error);
-        }
-      });
+        this.alertService.showStickyMessage(
+          'Delete Error',
+          `An error occurred whilst deleting the user.\r\nError: "${Utilities.getHttpResponseMessage(error)}"`,
+          MessageSeverity.error,
+          error
+        );
+      }
+    });
+  }
+
+  get canManageUsers() {
+    return this.accountService.userHasPermission(Permissions.manageUsers);
   }
 
   get canAssignRoles() {
@@ -259,8 +235,7 @@ export class UsersManagementComponent implements OnInit {
   get canViewRoles() {
     return this.accountService.userHasPermission(Permissions.viewRoles);
   }
-
-  get canManageUsers() {
-    return this.accountService.userHasPermission(Permissions.manageUsers);
-  }
+}
+interface UserIndex extends User {
+  index: number;
 }

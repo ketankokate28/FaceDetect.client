@@ -38,6 +38,10 @@ export class EndpointBase {
     return { headers };
   }
 
+  public getUserId(): any {
+      return this.authService.currentUser?.id;
+  }
+
   public refreshLogin(): Observable<User> {
     return this.authService.refreshLogin().pipe(
       catchError((error: ServerError) => {

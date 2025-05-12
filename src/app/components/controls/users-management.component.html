@@ -45,13 +45,14 @@
     </span>
   </ng-template>
 
-  <ng-template #rolesTemplate let-row="row" let-value="value" let-i="index">
-    <div title="{{value?.join('\n')}}">
-      @for (role of value; track $index) {
-        <span class="user-role badge rounded-pill bg-secondary">{{role}}</span>
-      }
-    </div>
-  </ng-template>
+<ng-template #rolesTemplate let-row="row" let-value="value">
+  <div title="{{ value?.join('\n') }}">
+    <!-- Iterate over the processed value array -->
+    <span *ngFor="let role of processRoles(value)" class="user-role badge rounded-pill bg-secondary">
+      {{ role }}
+    </span>
+  </div>
+</ng-template>
 
   <ng-template #actionsTemplate let-row="row" let-value="value" let-i="index">
     @if (canManageUsers) {
@@ -77,7 +78,7 @@
       <button type="button" class="btn-close fs-sm" title="Close" (click)="modal.close()" tabindex="-1"></button>
     </div>
     <div class="modal-body">
-      <app-user-info #userEditor [isGeneralEditor]="true" (afterOnInit)="setUserEditorComponent($event)"></app-user-info>
+      <app-user-info [isGeneralEditor]="true"></app-user-info>
     </div>
   </ng-template>
 </div>
