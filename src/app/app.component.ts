@@ -325,6 +325,10 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewProductsPermission
   }
 
+  get canViewFaceMatch() {
+    return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewProductsPermission
+  }
+
   get canViewAdmin() {
     return !!true; // eg. viewOrdersPermission
   }

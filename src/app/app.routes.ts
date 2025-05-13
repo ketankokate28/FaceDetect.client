@@ -37,6 +37,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     title: 'Products'
   },
+   {
+    path: 'facematch',
+    loadComponent: () => import('./components/facematch/matchfacelog-summary.component').then(m => m.MatchFaceLogSummaryComponent),
+    canActivate: [AuthGuard],
+    title: 'FaceMatch'
+  },
   {
     path: 'admin',
     loadComponent: () => import('./components/admin/admin.component').then(m => m.AdminComponent),

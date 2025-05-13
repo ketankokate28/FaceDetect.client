@@ -1,0 +1,148 @@
+<div class="card p-3">
+  <div class="row mb-2">
+    <div class="col-md-6">
+      <input type="text" class="form-control" placeholder="Search by name or ID..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChanged($event)" />
+    </div>
+  </div>
+
+  <ngx-datatable
+    class="material colored-header sm table-hover"
+    [loadingIndicator]="loadingIndicator"
+    [rows]="rows"
+    [rowHeight]="35"
+    [headerHeight]="37"
+    [footerHeight]="35"
+    [columnMode]="'force'"
+    [scrollbarH]="true"
+    [reorderable]="false"
+    [scrollbarV]="true"
+    style="min-width: 1200px;"
+    (activate)="onRowActivate($event)"
+  >
+    <!-- Suspect Name column with click handler -->
+    <ngx-datatable-column name="Suspect Name" [width]="200">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <a href="#" (click)="openIncidentPopup(row.suspectId, row.suspectName, $event)">
+          {{ row.suspectName }}
+        </a>
+      </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="Latest Capture" prop="latestCapture"></ngx-datatable-column>
+    <ngx-datatable-column name="Match Count" prop="matchCount"></ngx-datatable-column>
+  </ngx-datatable>
+</div>
+
+<!-- Incident Modal -->
+<ng-template #incidentModal let-modal>
+    <div class="modal-content">
+        <div class="modal-header" style="background-color: #f8f9fa; padding: 5px 15px;">
+        <h5 class="modal-title" style="font-size: 1rem; margin-bottom: 0;">Incidents for {{ selectedSuspectName }}</h5>
+        <!-- Smaller close button -->
+        <button type="button" class="btn-close" aria-label="Close" style="font-size: 1rem; padding: 0.25rem 0.5rem;" (click)="closeImageViewer(modal)"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered table-hover table-sm">
+            <thead class="thead-dark">
+              <tr>
+                <th>Frame</th>
+                <!-- <th>#</th> -->
+                <th>CCTV Name</th>
+                <th>CCTV Location</th>
+                <th>Capture Time</th>
+                <th>Distance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of incidentLogs; let i = index" (click)="openImage(log,imageViewer)">
+                <td>
+                  <a href="#" style="text-decoration: underline; color: #007bff;" (click)="openImage(log,imageViewer); $event.preventDefault()">
+                    {{ log.frame }}
+                  </a>
+                </td>
+                <!-- <td>{{ i + 1 }}</td> -->
+
+                <td>{{ log.cctvName }}</td>
+                <td>{{ log.cctvLocation }}</td>
+                <td>{{ log.captureTime }}</td>
+                <td>{{ log.distance }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+</ng-template>
+
+<ng-template #imageViewer let-modal>
+<div class="d-flex w-100 justify-content-between align-items-center">
+  <!-- Title on the left -->
+  <h5 class="modal-title mb-0">
+    🧠 Compare Suspect Photo vs Captured Frame for {{ selectedSuspectName }}
+  </h5>
+
+  <!-- Capture date on the right -->
+  <small class="text-muted ms-3 mb-0">
+    Captured on: {{ selectedCaptureDate | date: 'short' }}
+  </small>
+   <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+ 
+      
+ 
+</div>
+ <div class="d-flex justify-content-center w-100 mt-2">
+    <button class="btn btn-sm btn-outline-primary me-2" (click)="toggleFullScreen()">
+      <i class="bi bi-arrows-fullscreen"></i> {{ isFullscreen ? 'Exit Fullscreen' : 'Fullscreen' }}
+    </button>
+    <button class="btn btn-sm btn-outline-secondary me-2" (click)="downloadImage(suspectPhoto, 'suspect.jpg')">
+      <i class="bi bi-download"></i> Download Suspect
+    </button>
+    <button class="btn btn-sm btn-outline-secondary me-2" (click)="downloadImage(selectedImageUrl, 'captured.jpg')">
+      <i class="bi bi-download"></i> Download Frame
+    </button>
+    <button class="btn btn-sm btn-outline-dark" (click)="rotateImages()">
+      <i class="bi bi-arrow-clockwise"></i> Rotate
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <div class="row">
+      <!-- Suspect Image -->
+      <div class="col-md-6 text-center">
+        <h6 class="mb-2">Suspect Photo</h6>
+        <img
+          *ngIf="suspectPhoto"
+          [src]="'data:image/jpeg;base64,' + suspectPhoto"
+          alt="Suspect Photo"
+          class="img-fluid border rounded shadow-sm"
+          [style.transform]="imageRotation"
+          style="max-height: 70vh; object-fit: contain;"
+          ngxPinchZoom
+        />
+        <div *ngIf="!suspectPhoto" class="text-muted">No suspect photo available.</div>
+      </div>
+
+      <!-- Divider -->
+      <div class="col-md-1 d-flex align-items-center justify-content-center">
+        <div style="width: 1px; height: 100%; background-color: #ccc;"></div>
+      </div>
+
+      <!-- Captured Frame -->
+      <div class="col-md-5 text-center">
+        <h6 class="mb-2">Captured Frame</h6>
+        <img
+          *ngIf="selectedImageUrl"
+          [src]="selectedImageUrl"
+          alt="Captured Frame"
+          class="img-fluid border rounded shadow-sm"
+          [style.transform]="imageRotation"
+          style="max-height: 70vh; object-fit: contain;"
+          ngxPinchZoom
+        />
+      </div>
+    </div>
+  </div>
+</ng-template>
