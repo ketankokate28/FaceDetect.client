@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@siemens/ngx-datatable';
+import { SearchBoxComponent } from '../controls/search-box.component';
 
 @Component({
   selector: 'app-matchfacelog-summary',
   templateUrl: './matchfacelog-summary.component.html',
   styleUrls: ['./matchfacelog-summary.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxDatatableModule, TranslateModule]
+  imports: [CommonModule, FormsModule, NgxDatatableModule, TranslateModule,SearchBoxComponent]
 })
 export class MatchFaceLogSummaryComponent implements OnInit {
   rows: MatchFaceLogSummary[] = [];

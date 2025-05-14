@@ -16,52 +16,54 @@
   [columnMode]="'force'"
   style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-top: 20px;">
 </ngx-datatable>
-
-<!-- Modal Backdrop -->
+<!-- Modal Wrapper with click listener -->
 <div *ngIf="isModalVisible"
+     class="modal-wrapper"
+     (click)="onModalBackgroundClick($event)"
      style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: 1040;"></div>
+            background: rgba(0, 0, 0, 0.6); z-index: 1040; display: flex; align-items: center; justify-content: center;">
 
-<!-- Modal Content -->
-<div *ngIf="isModalVisible"
-     style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; border-radius: 16px; box-shadow: 0 12px 32px rgba(0,0,0,0.3);
-            z-index: 1050; width: 90%; max-width: 800px; padding: 24px;">
+  <!-- Modal Content -->
+  <div class="modal-content"
+       style="background: white; border-radius: 16px; box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+              z-index: 1050; width: 90%; max-width: 800px; padding: 24px;"
+       (click)="$event.stopPropagation()"> <!-- Prevent click inside modal from closing it -->
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">📬 Notification Delivery Details</h4>
-    <button class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">📬 Notification Delivery Details</h4>
+      <button class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Recipient</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Channel</th>
+          <th>Status</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of notificationDetails">
+          <td>{{ d.recipient_name }}</td>
+          <td>{{ d.email }}</td>
+          <td>{{ d.phone }}</td>
+          <td><span class="badge bg-secondary">{{ d.channel }}</span></td>
+          <td>
+            <span class="badge"
+                  [ngClass]="{
+                    'bg-success': d.delivery_status?.toLowerCase() === 'sent',
+                    'bg-danger': d.delivery_status?.toLowerCase() === 'failed',
+                    'bg-warning text-dark': d.delivery_status?.toLowerCase() === 'pending'
+                  }">
+              {{ d.delivery_status }}
+            </span>
+          </td>
+          <td>{{ d.delivery_time | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-
-  <table class="table table-bordered table-hover table-striped align-middle">
-    <thead class="table-light">
-      <tr>
-        <th>Recipient</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Channel</th>
-        <th>Status</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let d of notificationDetails">
-        <td>{{ d.recipient_name }}</td>
-        <td>{{ d.email }}</td>
-        <td>{{ d.phone }}</td>
-        <td><span class="badge bg-secondary">{{ d.channel }}</span></td>
-        <td>
-  <span class="badge"
-        [ngClass]="{
-          'bg-success': d.delivery_status?.toLowerCase() === 'sent',
-          'bg-danger': d.delivery_status?.toLowerCase() === 'failed',
-          'bg-warning text-dark': d.delivery_status?.toLowerCase() === 'pending'
-        }">
-    {{ d.delivery_status }}
-  </span>
-</td>
-        <td>{{ d.delivery_time | date:'short' }}</td>
-      </tr>
-    </tbody>
-  </table>
 </div>

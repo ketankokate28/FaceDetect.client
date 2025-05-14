@@ -1,9 +1,21 @@
-<div class="card p-3">
-  <div class="row mb-2">
+ <header class="pageHeader">
+    <h3><i class="fa fa-users fa-lg page-caption" aria-hidden="true"></i> Face Match</h3>
+  </header>
+ <div class="card p-3">
+ <!-- <div class="row mb-2">
     <div class="col-md-6">
       <input type="text" class="form-control" placeholder="Search by name or ID..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChanged($event)" />
     </div>
+  </div> -->
+
+<div class="row control-box">
+  <div class="col-lg-8">
+    <div class="search-box">
+      <app-search-box (searchChange)="onSearchChanged($event)" placeholder="{{'by name or ID.' | translate}}" />
+    </div>
   </div>
+
+</div>
 
   <ngx-datatable
     class="material colored-header sm table-hover"

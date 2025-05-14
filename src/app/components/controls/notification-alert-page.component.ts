@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-notification-alert-page',
   templateUrl: './notification-alert-page.component.html',
     styleUrls: ['./notification-alert-page.component.scss',],
- imports: [SearchBoxComponent, NgxDatatableModule, FormsModule, AutofocusDirective, NgbTooltip, NgClass, TranslateModule, CommonModule]
+ imports: [NgxDatatableModule, FormsModule, NgClass, TranslateModule, CommonModule]
     
 })
 export class NotificationAlertPageComponent implements OnInit {
@@ -59,7 +59,9 @@ loadSummary(): void {
       this.summaryData = data;
     });
   }
-
+onModalBackgroundClick(event: MouseEvent): void {
+  this.closeModal(); // Close the modal if clicked outside
+}
 isModalVisible = false;
 
 showDetails(notificationId: number, recipientId: number): void {

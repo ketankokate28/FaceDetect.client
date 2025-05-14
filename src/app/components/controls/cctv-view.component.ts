@@ -26,7 +26,7 @@ import { TableColumn, NgxDatatableModule } from '@siemens/ngx-datatable';
   selector: 'app-cctv-view',
   templateUrl: './cctv-view.component.html',
   styleUrls: ['./cctv-view.component.scss'],
-  imports: [SearchBoxComponent, NgxDatatableModule, FormsModule, AutofocusDirective, NgbTooltip, NgClass, TranslateModule, CommonModule]
+  imports: [SearchBoxComponent, NgxDatatableModule, FormsModule, NgbTooltip, NgClass, TranslateModule, CommonModule]
 })
 export class CctvViewComponent implements OnInit {
     @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<any>;
