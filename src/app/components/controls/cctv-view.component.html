@@ -26,8 +26,10 @@
       [scrollbarH]="true"
       [reorderable]="false"
       [scrollbarV]="true"
-      style="min-width: 1200px;">
-
+      style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-top: 20px;"
+   
+      >
+   <!-- style="min-width: 1200px;" -->
   <!-- Name column with clickable link -->
   <ngx-datatable-column name="Name" prop="name" [frozenLeft]="true">
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
