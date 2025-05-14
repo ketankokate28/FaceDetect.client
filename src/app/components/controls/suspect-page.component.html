@@ -39,7 +39,13 @@
     </ngx-datatable-column>
     <ngx-datatable-column name="Last Name" prop="lastName"></ngx-datatable-column>
     <ngx-datatable-column name="Date of Birth" prop="dateOfBirth"></ngx-datatable-column>
-    <ngx-datatable-column name="Gender" prop="gender"></ngx-datatable-column>
+<ngx-datatable-column name="Gender" prop="gender">
+  <ng-template let-row="row" ngx-datatable-cell-template>
+    <span *ngIf="row.gender === 'M'">Male</span>
+    <span *ngIf="row.gender === 'F'">Female</span>
+    <span *ngIf="row.gender === 'O'">Other</span>
+  </ng-template>
+</ngx-datatable-column>
     <ngx-datatable-column name="Nationality" prop="nationality"></ngx-datatable-column>
     <ngx-datatable-column name="Height (cm)" prop="heightCm"></ngx-datatable-column>
     <ngx-datatable-column name="Weight (kg)" prop="weightKg"></ngx-datatable-column>
@@ -52,7 +58,7 @@
     <ngx-datatable-column name="Shoe Size" prop="shoeSize"></ngx-datatable-column>
 
 
-    <ngx-datatable-column name="description" prop="description"></ngx-datatable-column>
+    <ngx-datatable-column name="Description" prop="description"></ngx-datatable-column>
     <ngx-datatable-column name="Aliases" prop="aliases"></ngx-datatable-column>
     <ngx-datatable-column name="Image" [sortable]="false">
       <ng-template let-row="row" ngx-datatable-cell-template>
@@ -109,9 +115,9 @@
             <label for="gender">Gender</label>
             <select id="gender" class="form-control" [(ngModel)]="suspectEdit.gender" name="gender" required>
               <option value="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="O">Other</option>
             </select>
           </div>
         </div>
@@ -199,7 +205,7 @@
         <!-- Gait Analysis -->
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="description">description</label>
+            <label for="description">Description</label>
             <input type="text"  id="description" class="form-control" [(ngModel)]="suspectEdit.description" name="description">
           </div>
         </div>

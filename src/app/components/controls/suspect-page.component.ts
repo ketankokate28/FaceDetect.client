@@ -50,6 +50,7 @@ export class SuspectPageComponent implements OnInit {
     { name: 'Assigned Officer', prop: 'aliases' },
     { name: 'Facial Image', prop: 'facialImage' },
     { name: 'file_blob_base64', prop: 'file_blob_base64' },
+    { name: 'description', prop: 'description' },
     { name: 'Action', prop: 'action', cellTemplate: this.actionsTemplate }
   ];
 
@@ -137,12 +138,12 @@ export class SuspectPageComponent implements OnInit {
 
   saveSuspect(): void {
     
-    if (!this.suspectEdit.firstName || !this.selectedFile) {
+    if (!this.suspectEdit.firstName) {
       // If any of the fields are empty, show an alert or error message
-      alert("Both Suspect Name and Created By fields are required.");
+      alert("Both Suspect Name is required.");
       return; // Prevent further execution if fields are missing
     }
-    else
+    else if (this.selectedFile)
     {
       this.suspectEdit.image =this.selectedFile;
     }

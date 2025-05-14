@@ -128,7 +128,7 @@ export class CctvViewComponent implements OnInit {
   // Method to open modal for adding new CCTV
   addCctv(): void {
     this.cctvEdit = {} as Cctv; // Reset form
-    this.modalService.open(this.editorModal, { size: 'lg' });
+   this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });
   }
 
   saveCctv(): void {

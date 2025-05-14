@@ -59,7 +59,7 @@ export class SuspectService {
       createdAt: item.created_at,
       updatedAt: item.updated_at,
       // image is not part of the GET response — ignore here
-      description: '', // You can adjust this if the backend starts returning a description
+      description: item.description, // You can adjust this if the backend starts returning a description
       isActive: true,  // Default value if not provided
       file_path : item.file_path,
       file_blob_base64 : item.file_blob_base64
@@ -107,6 +107,7 @@ export class SuspectService {
     // Metadata
     safeAppend('created_by', suspect.createdBy);
     safeAppend('modified_by', suspect.modifiedBy);
+        safeAppend('description', suspect.description);
   
     // Image file
     if (suspect.image instanceof File) {

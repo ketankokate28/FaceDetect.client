@@ -103,6 +103,7 @@ export class UserInfoComponent implements OnInit {
     this.alertService.stopLoadingMessage();
     this.user = user;
     this.allRoles = roles;
+     Object.assign(this.userEdit, this.user);
   }
 
   private onCurrentUserDataLoadFailed(error: HttpErrorResponse) {

@@ -33,6 +33,13 @@
               </a>
             </li>
             }
+              @if (canViewFaceMatch) {
+              <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/facematch" (click)="isMenuCollapsed = true">
+                  {{'mainMenu.FaceMatch' | translate}}
+                </a>
+              </li>
+             }
            @if (canViewNotifications) {
               <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/notifications" (click)="isMenuCollapsed = true">
@@ -40,13 +47,7 @@
                 </a>
               </li>
              }
-           @if (canViewFaceMatch) {
-              <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link" routerLink="/facematch" (click)="isMenuCollapsed = true">
-                  {{'mainMenu.FaceMatch' | translate}}
-                </a>
-              </li>
-             }   
+            
           @if (canViewAdmin) {
           <li class="nav-item" routerLinkActive="active">
             <a class="nav-link" routerLink="/admin" (click)="isMenuCollapsed = true">
