@@ -28,19 +28,20 @@ export class StatisticsDemoComponent implements OnInit, OnDestroy {
   chartData = [
     {
       data: [65, 59, 80, 81, 56, 55],
-      label: 'Series A',
+      label: '2024',
       fill: 'origin',
     },
     {
       data: [28, 48, 40, 19, 86, 27],
-      label: 'Series B',
-      fill: 'origin',
-    },
-    {
-      data: [18, 48, 77, 9, 100, 27],
-      label: 'Series C',
+      label: '2025',
       fill: 'origin',
     }
+    // },
+    // {
+    //   data: [18, 48, 77, 9, 100, 27],
+    //   label: 'Series C',
+    //   fill: 'origin',
+    // }
   ];
 
   timerReference: ReturnType<typeof setInterval> | undefined;

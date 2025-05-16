@@ -15,16 +15,16 @@ export class NotificationEndpoint {
   private demoNotifications = [
     {
       id: 1,
-      header: '20 New Products were added to your inventory by "administrator"',
-      body: '20 new "BMW M6" were added to your stock by "administrator" on 5/28/2017 4:54:13 PM',
+      header: 'Suspect Prakash is found in CCTV1 near Palghar sec 5 on 5/28/2017 4:54:13 PM',
+      body: 'Prakash Bhalerao 1 is found in CCTV1 near Palghar sec 5 on 5/28/2017 4:54:13 PM',
       isRead: true,
       isPinned: true,
       date: '2017-05-28T16:29:13.5877958'
     },
     {
       id: 2,
-      header: '1 Product running low',
-      body: 'You are running low on "Nissan Patrol". 2 Items remaining',
+      header: 'Suspect 2 is found in CCTV5 near Palghar sec 3 on 5/28/2017 4:54:13 PM',
+      body: 'Suspect 2 is found in CCTV5 near Palghar sec 3 on 5/28/2017 4:54:13 PM',
       isRead: false,
       isPinned: false,
       date: '2017-05-28T19:54:42.4144502'
@@ -32,7 +32,7 @@ export class NotificationEndpoint {
     {
       id: 3,
       header: 'Tomorrow is half day',
-      body: 'Guys, tomorrow we close by midday. Please check in your sales before noon. Thanks. Alex.',
+      body: 'Guys, tomorrow we close by midday. Please check all your notifications. Thanks.',
       isRead: false,
       isPinned: false,
       date: '2017-05-30T11:13:42.4144502'

@@ -217,7 +217,7 @@
   "home": {
     "NoWidgets1": "You have no widgets displayed. Goto",
     "NoWidgets2": "to configure available widgets",
-    "StatisticsTitle": "Some Important Stuff"
+    "StatisticsTitle": "Suspect found summary"
   },
   "notFound": {
     "404": "404",

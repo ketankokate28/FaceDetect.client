@@ -50,7 +50,6 @@ export class CctvViewComponent implements OnInit {
     { name: 'Last Maintenance Date', prop: 'lastMaintenanceDate' },
     { name: 'Status', prop: 'status' },
     { name: 'Last Active Timestamp', prop: 'lastActiveTimestamp' },
-    { name: 'Error Count', prop: 'errorCount' },
     { name: 'Auto Restart', prop: 'autoRestart' },
     { name: 'Is Critical', prop: 'isCritical' },
     { name: 'Face Crop Enabled', prop: 'faceCropEnabled' },

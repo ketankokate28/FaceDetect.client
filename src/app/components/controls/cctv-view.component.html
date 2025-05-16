@@ -55,7 +55,6 @@
   <ngx-datatable-column name="Last Maintenance Date" prop="lastMaintenanceDate"></ngx-datatable-column>
   <ngx-datatable-column name="Status" prop="status"></ngx-datatable-column>
   <ngx-datatable-column name="Last Active Timestamp" prop="lastActiveTimestamp"></ngx-datatable-column>
-  <ngx-datatable-column name="Error Count" prop="errorCount"></ngx-datatable-column>
   <ngx-datatable-column name="Auto Restart" prop="autoRestart"></ngx-datatable-column>
   <ngx-datatable-column name="Is Critical" prop="isCritical"></ngx-datatable-column>
   <ngx-datatable-column name="Face Crop Enabled" prop="faceCropEnabled"></ngx-datatable-column>
@@ -88,202 +87,203 @@
     </div>
     <div class="modal-body">
       <form #f="ngForm" (ngSubmit)="f.form.valid ? saveCctv() : null">
-        <div class="mb-3 row">
-          <label for="name" class="col-form-label col-md-3">{{'Name' | translate}}:</label>
-          <div class="col-md-9">
+           <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+          <label for="name" class="form-label">{{'Name' | translate}}:</label>
             <input type="text" id="name" class="form-control" [(ngModel)]="cctvEdit.name" name="name" required />
           </div>
         </div>
   
-        <div class="mb-3 row">
-          <label for="location" class="col-form-label col-md-3">{{'Location' | translate}}:</label>
-          <div class="col-md-9">
+        <div class="col-md-6">
+            <div class="mb-3">
+          <label for="location" class="form-label">{{'Location' | translate}}:</label>
             <input type="text" id="location" class="form-control" [(ngModel)]="cctvEdit.location" name="location" />
           </div>
         </div>
   
-        <div class="mb-3 row">
-          <label for="description" class="col-form-label col-md-3">{{'Description' | translate}}:</label>
+
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="ipAddress" class="form-label">{{'IP Address' | translate}}:</label>
+            <input type="text" id="ipAddress" class="form-control" [(ngModel)]="cctvEdit.ipAddress" name="ipAddress" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+          <div class="mb-3">
+          <label for="latitude" class="form-label">{{'Latitude' | translate}}:</label>
+            <input type="number" id="latitude" class="form-control" [(ngModel)]="cctvEdit.latitude" name="latitude" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="longitude" class="form-label">{{'Longitude' | translate}}:</label>
+            <input type="number" id="longitude" class="form-control" [(ngModel)]="cctvEdit.longitude" name="longitude" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="altitude" class="form-label">{{'Altitude' | translate}}:</label>
+            <input type="number" id="altitude" class="form-control" [(ngModel)]="cctvEdit.altitude" name="altitude" />
+          </div>
+        </div>
+  
+<div class="col-md-6">
+  <div class="mb-3">
+    <label for="cameraType" class="form-label">{{ 'Camera Type' | translate }}:</label>
+    <select id="cameraType" class="form-control" [(ngModel)]="cctvEdit.cameraType" name="cameraType">
+      <option *ngFor="let type of cameraTypeOptions" [value]="type">{{ type }}</option>
+    </select>
+  </div>
+</div>
+
+<div class="col-md-6">
+  <div class="mb-3">
+    <label for="cameraAngle" class="form-label">{{ 'Camera Angle' | translate }}:</label>
+    <input type="text" id="cameraAngle" class="form-control" [(ngModel)]="cctvEdit.cameraAngle" name="cameraAngle" />
+  </div>
+</div>
+
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="resolution" class="form-label">{{'Resolution' | translate}}:</label>
+            <input type="text" id="resolution" class="form-control" [(ngModel)]="cctvEdit.resolution" name="resolution" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="recordingStatus" class="form-label">{{'Recording Status' | translate}}:</label>
+            <input type="text" id="recordingStatus" class="form-control" [(ngModel)]="cctvEdit.recordingStatus" name="recordingStatus" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="storageDurationDays" class="form-label">{{'Storage Duration (Days)' | translate}}:</label>
+            <input type="number" id="storageDurationDays" class="form-control" [(ngModel)]="cctvEdit.storageDurationDays" name="storageDurationDays" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="installationDate" class="form-label">{{'Installation Date' | translate}}:</label>
+            <input type="date" id="installationDate" class="form-control" [(ngModel)]="cctvEdit.installationDate" name="installationDate" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="lastMaintenanceDate" class="form-label">{{'Last Maintenance Date' | translate}}:</label>
+            <input type="date" id="lastMaintenanceDate" class="form-control" [(ngModel)]="cctvEdit.lastMaintenanceDate" name="lastMaintenanceDate" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="status" class="form-label">{{'Status' | translate}}:</label>
+            <input type="text" id="status" class="form-control" [(ngModel)]="cctvEdit.status" name="status" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="lastActiveTimestamp" class="form-label">{{'Last Active Timestamp' | translate}}:</label>
+            <input type="datetime-local" id="lastActiveTimestamp" class="form-control" [(ngModel)]="cctvEdit.lastActiveTimestamp" name="lastActiveTimestamp" />
+          </div>
+        </div>
+                <div class="col-md-6">
+           <div class="mb-3">
+          <label for="videoDownloadLocation" class="form-label">{{'Video Download Location' | translate}}:</label>
+            <input type="text" id="videoDownloadLocation" class="form-control" [(ngModel)]="cctvEdit.videoDownloadLocation" name="videoDownloadLocation" />
+          </div>
+        </div>
+  
+       <div class="row">
+  <div class="col-md-4">
+    <div class="form-check mb-3">
+      <input type="checkbox" id="autoRestart" class="form-check-input" [(ngModel)]="cctvEdit.autoRestart" name="autoRestart" />
+      <label for="autoRestart" class="form-check-label">{{ 'Auto Restart' | translate }}</label>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="form-check mb-3">
+      <input type="checkbox" id="isCritical" class="form-check-input" [(ngModel)]="cctvEdit.isCritical" name="isCritical" />
+      <label for="isCritical" class="form-check-label">{{ 'Is Critical' | translate }}</label>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="form-check mb-3">
+      <input type="checkbox" id="faceCropEnabled" class="form-check-input" [(ngModel)]="cctvEdit.faceCropEnabled" name="faceCropEnabled" />
+      <label for="faceCropEnabled" class="form-check-label">{{ 'Face Crop Enabled' | translate }}</label>
+    </div>
+  </div>
+</div>
+
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="frameMatchInterval" class="form-label">{{'Frame Match Interval' | translate}}:</label>
+            <input type="number" id="frameMatchInterval" class="form-control" [(ngModel)]="cctvEdit.frameMatchInterval" name="frameMatchInterval" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="alertGroupId" class="form-label">{{'Alert Group ID' | translate}}:</label>
+            <input type="number" id="alertGroupId" class="form-control" [(ngModel)]="cctvEdit.alertGroupId" name="alertGroupId" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="siteId" class="form-label">{{'Site ID' | translate}}:</label>
+            <input type="number" id="siteId" class="form-control" [(ngModel)]="cctvEdit.siteId" name="siteId" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="zone" class="form-label">{{'Zone' | translate}}:</label>
+            <input type="text" id="zone" class="form-control" [(ngModel)]="cctvEdit.zone" name="zone" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="assignedGuard" class="form-label">{{'Assigned Guard' | translate}}:</label>
+            <input type="number" id="assignedGuard" class="form-control" [(ngModel)]="cctvEdit.assignedGuard" name="assignedGuard" />
+          </div>
+        </div>
+  
+        <div class="col-md-6">
+           <div class="mb-3">
+          <label for="cameraModel" class="form-label">{{'Camera Model' | translate}}:</label>
+            <input type="text" id="cameraModel" class="form-control" [(ngModel)]="cctvEdit.cameraModel" name="cameraModel" />
+          </div>
+        </div>
+  
+
+  
+        <div class="col-md-6" [ngClass]="{'d-none': hideField}">
+           <div class="mb-3">
+          <label for="streamUrl" class="form-label">{{'Stream URL' | translate}}:</label>
+            <input type="text" id="streamUrl" class="form-control" [(ngModel)]="cctvEdit.streamUrl" name="streamUrl" />
+          </div>
+        </div>
+                <div class="mb-3 row">
+          <label for="description" class="form-label">{{'Description' | translate}}:</label>
           <div class="col-md-9">
             <textarea id="description" class="form-control" [(ngModel)]="cctvEdit.description" name="description"></textarea>
           </div>
         </div>
   
-        <div class="mb-3 row">
-          <label for="ipAddress" class="col-form-label col-md-3">{{'IP Address' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="ipAddress" class="form-control" [(ngModel)]="cctvEdit.ipAddress" name="ipAddress" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="latitude" class="col-form-label col-md-3">{{'Latitude' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="latitude" class="form-control" [(ngModel)]="cctvEdit.latitude" name="latitude" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="longitude" class="col-form-label col-md-3">{{'Longitude' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="longitude" class="form-control" [(ngModel)]="cctvEdit.longitude" name="longitude" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="altitude" class="col-form-label col-md-3">{{'Altitude' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="altitude" class="form-control" [(ngModel)]="cctvEdit.altitude" name="altitude" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="cameraType" class="col-form-label col-md-3">{{'Camera Type' | translate}}:</label>
-          <div class="col-md-9">
-            <select id="cameraType" class="form-control" [(ngModel)]="cctvEdit.cameraType" name="cameraType">
-              <option *ngFor="let type of cameraTypeOptions" [value]="type">{{ type }}</option>
-            </select>
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="cameraAngle" class="col-form-label col-md-3">{{'Camera Angle' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="cameraAngle" class="form-control" [(ngModel)]="cctvEdit.cameraAngle" name="cameraAngle" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="resolution" class="col-form-label col-md-3">{{'Resolution' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="resolution" class="form-control" [(ngModel)]="cctvEdit.resolution" name="resolution" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="recordingStatus" class="col-form-label col-md-3">{{'Recording Status' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="recordingStatus" class="form-control" [(ngModel)]="cctvEdit.recordingStatus" name="recordingStatus" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="storageDurationDays" class="col-form-label col-md-3">{{'Storage Duration (Days)' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="storageDurationDays" class="form-control" [(ngModel)]="cctvEdit.storageDurationDays" name="storageDurationDays" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="installationDate" class="col-form-label col-md-3">{{'Installation Date' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="date" id="installationDate" class="form-control" [(ngModel)]="cctvEdit.installationDate" name="installationDate" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="lastMaintenanceDate" class="col-form-label col-md-3">{{'Last Maintenance Date' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="date" id="lastMaintenanceDate" class="form-control" [(ngModel)]="cctvEdit.lastMaintenanceDate" name="lastMaintenanceDate" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="status" class="col-form-label col-md-3">{{'Status' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="status" class="form-control" [(ngModel)]="cctvEdit.status" name="status" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="lastActiveTimestamp" class="col-form-label col-md-3">{{'Last Active Timestamp' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="datetime-local" id="lastActiveTimestamp" class="form-control" [(ngModel)]="cctvEdit.lastActiveTimestamp" name="lastActiveTimestamp" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="errorCount" class="col-form-label col-md-3">{{'Error Count' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="errorCount" class="form-control" [(ngModel)]="cctvEdit.errorCount" name="errorCount" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="autoRestart" class="col-form-label col-md-3">{{'Auto Restart' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="checkbox" id="autoRestart" class="form-check-input" [(ngModel)]="cctvEdit.autoRestart" name="autoRestart" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="isCritical" class="col-form-label col-md-3">{{'Is Critical' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="checkbox" id="isCritical" class="form-check-input" [(ngModel)]="cctvEdit.isCritical" name="isCritical" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="faceCropEnabled" class="col-form-label col-md-3">{{'Face Crop Enabled' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="checkbox" id="faceCropEnabled" class="form-check-input" [(ngModel)]="cctvEdit.faceCropEnabled" name="faceCropEnabled" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="frameMatchInterval" class="col-form-label col-md-3">{{'Frame Match Interval' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="frameMatchInterval" class="form-control" [(ngModel)]="cctvEdit.frameMatchInterval" name="frameMatchInterval" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="alertGroupId" class="col-form-label col-md-3">{{'Alert Group ID' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="alertGroupId" class="form-control" [(ngModel)]="cctvEdit.alertGroupId" name="alertGroupId" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="siteId" class="col-form-label col-md-3">{{'Site ID' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="siteId" class="form-control" [(ngModel)]="cctvEdit.siteId" name="siteId" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="zone" class="col-form-label col-md-3">{{'Zone' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="zone" class="form-control" [(ngModel)]="cctvEdit.zone" name="zone" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="assignedGuard" class="col-form-label col-md-3">{{'Assigned Guard' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="number" id="assignedGuard" class="form-control" [(ngModel)]="cctvEdit.assignedGuard" name="assignedGuard" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="cameraModel" class="col-form-label col-md-3">{{'Camera Model' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="cameraModel" class="form-control" [(ngModel)]="cctvEdit.cameraModel" name="cameraModel" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row">
-          <label for="videoDownloadLocation" class="col-form-label col-md-3">{{'Video Download Location' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="videoDownloadLocation" class="form-control" [(ngModel)]="cctvEdit.videoDownloadLocation" name="videoDownloadLocation" />
-          </div>
-        </div>
-  
-        <div class="mb-3 row" [ngClass]="{'d-none': hideField}">
-          <label for="streamUrl" class="col-form-label col-md-3">{{'Stream URL' | translate}}:</label>
-          <div class="col-md-9">
-            <input type="text" id="streamUrl" class="form-control" [(ngModel)]="cctvEdit.streamUrl" name="streamUrl" />
-          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary" [disabled]="!f.form.valid">
