@@ -35,7 +35,7 @@ export const routes: Routes = [
     path: 'notifications',
     loadComponent: () => import('./components/notification/notification-page-view.component').then(m => m.NotificationPageViewComponent),
     canActivate: [AuthGuard],
-    title: 'Products'
+    title: 'Notifications'
   },
    {
     path: 'facematch',
