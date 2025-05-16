@@ -62,7 +62,7 @@ export class SuspectPageComponent implements OnInit {
   private modalRef: NgbModalRef | any;
   previewImage: string | null = null;
   @ViewChild('imagePreviewModal') imagePreviewModal: any;
-  
+  private authService = inject(AuthService);
   constructor(
     private modalService: NgbModal,
     private suspectService: SuspectService, // Service to interact with the backend API
@@ -84,6 +84,10 @@ export class SuspectPageComponent implements OnInit {
       error => {
         console.error('Error loading Suspect data:', error);
         this.loadingIndicator = false;
+        if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
       }
     );
   }
@@ -161,6 +165,10 @@ export class SuspectPageComponent implements OnInit {
       },
       error => {
         console.error('Error saving suspect:', error);
+        if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
       }
     );
   }
@@ -182,6 +190,10 @@ export class SuspectPageComponent implements OnInit {
         },
         error => {
           console.error('Error deleting Suspect:', error);
+          if(error.error.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
         }
       );
     }
@@ -237,6 +249,10 @@ export class SuspectPageComponent implements OnInit {
         },
         error => {
           console.error('Delete failed:', error);
+          if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
         }
       );
     }

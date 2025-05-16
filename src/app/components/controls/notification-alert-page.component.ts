@@ -1,4 +1,4 @@
-import { Component, input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, input, OnInit, ViewChild } from '@angular/core';
 import { NotificationAlertService } from '../../services/notification-alert.service';
 import { NotificationAlert } from '../../models/NotificationAlert.model';
 import { SearchBoxComponent } from './search-box.component';
@@ -8,6 +8,7 @@ import { AutofocusDirective } from '../../directives/autofocus.directive';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule, formatDate, NgClass } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-notification-alert-page',
   templateUrl: './notification-alert-page.component.html',
@@ -25,7 +26,7 @@ selectedNotificationId: number | null = null;
 selectedRecipientId: number | null = null;
  summaryData: any[] = [];
   columns: any[] = [];
-  
+   private authService = inject(AuthService);
   @ViewChild('notificationId', { static: true }) notificationIdTemplate: any;
     readonly verticalScrollbar = input(false);
   constructor(private notificationAlertService: NotificationAlertService) { }
@@ -55,9 +56,18 @@ loadNotificationSummary(): void {
   });
 }
 loadSummary(): void {
-    this.notificationAlertService.getNotificationSummary().subscribe(data => {
+    this.notificationAlertService.getNotificationSummary().subscribe(
+      data => {
       this.summaryData = data;
-    });
+    },
+  error => {
+        console.error('Error loading notification data:', error);
+        if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
+      }
+  );
   }
 onModalBackgroundClick(event: MouseEvent): void {
   this.closeModal(); // Close the modal if clicked outside

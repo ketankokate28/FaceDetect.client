@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatchFaceLogService, MatchFaceLogSummary } from '../../services/matchfacelog.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { SearchBoxComponent } from '../controls/search-box.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-matchfacelog-summary',
@@ -27,7 +28,7 @@ rotationAngle: number = 0;
 suspectPhoto: string = '';
 selectedCaptureDate: string = '';  // Store the capture date
 isFullscreen: boolean = false; // Track fullscreen state
-
+private authService = inject(AuthService);
 selectedImageUrl: string = '';
 rootImagePath = 'C:/Ketan/R&D/flask-backend-api/matched_faces'; // <-- Update this to your actual root path
 
@@ -59,6 +60,10 @@ columns = [
       error: err => {
         console.error('Failed to load match face log summary:', err);
         this.loadingIndicator = false;
+        if(err?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
       }
     });
   }
@@ -97,6 +102,10 @@ this.service.getIncidentsBySuspect(suspectId).subscribe({
   },
   error: (err) => {
     console.error('Failed to load incidents:', err);
+        if(err?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
   }
 });
 }

@@ -68,6 +68,7 @@ export class CctvViewComponent implements OnInit {
   rows: Cctv[] = [];
   rowsCache: Cctv[] = [];
   readonly verticalScrollbar = input(false);
+  private authService = inject(AuthService);
   @ViewChild('editorModal') editorModal!: TemplateRef<any>; // This line is required
   private modalRef: any;
   constructor(
@@ -104,6 +105,10 @@ export class CctvViewComponent implements OnInit {
       error => {
         console.error('Error loading CCTV data:', error);
         this.loadingIndicator = false;
+        if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
       }
     );
   }
@@ -141,6 +146,10 @@ export class CctvViewComponent implements OnInit {
         },
         error => {
           console.error('Error updating CCTV:', error);
+          if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
         }
       );
     } else {
@@ -153,6 +162,10 @@ export class CctvViewComponent implements OnInit {
         },
         error => {
           console.error('Error creating CCTV:', error);
+          if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
         }
       );
     }
@@ -174,6 +187,10 @@ export class CctvViewComponent implements OnInit {
         },
         error => {
           console.error('Delete failed:', error);
+          if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
         }
       );
     }
@@ -187,6 +204,10 @@ export class CctvViewComponent implements OnInit {
         },
         error => {
           console.error('Error deleting CCTV:', error);
+          if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
         }
       );
     }

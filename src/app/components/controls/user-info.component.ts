@@ -20,6 +20,7 @@ import { Permissions } from '../../models/permission.model';
 import { NgClass } from '@angular/common';
 import { AutofocusDirective } from '../../directives/autofocus.directive';
 import { EqualValidator } from '../../directives/equal-validator.directive';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-user-info',
@@ -46,7 +47,7 @@ export class UserInfoComponent implements OnInit {
   public allRoles: Role[] = [];
 
   public formResetToggle = true;
-
+private authService = inject(AuthService);
   public changesSavedCallback: (() => void) | undefined;
   public changesFailedCallback: (() => void) | undefined;
   public changesCancelledCallback: (() => void) | undefined;
@@ -243,6 +244,10 @@ export class UserInfoComponent implements OnInit {
     if (this.changesFailedCallback) {
       this.changesFailedCallback();
     }
+         if(error?.error?.msg =="Token has expired")
+        {
+          this.authService.reLogin();
+        }
   }
 
   private testIsRoleUserCountChanged(currentUser: User, editedUser: User) {
