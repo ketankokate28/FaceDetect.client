@@ -19,10 +19,17 @@
               <i class="fa fa-home"></i>
             </a>
           </li>
-          @if (canViewCustomers) {
+          @if (canViewPoliceStation) {
+          <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link" routerLink="/policestation" (click)="isMenuCollapsed = true">
+              {{'Police Station' | translate}}
+            </a>
+          </li>
+          }
+          @if (canViewCCTV) {
           <li class="nav-item" routerLinkActive="active">
             <a class="nav-link" routerLink="/cctv" (click)="isMenuCollapsed = true">
-              {{'mainMenu.Customers' | translate}}
+              {{'CCTV' | translate}}
             </a>
           </li>
           }

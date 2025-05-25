@@ -19,6 +19,12 @@ export const routes: Routes = [
     loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent),
     title: 'Login'
   },
+    {
+    path: 'policestation',
+    loadComponent: () => import('./components/policestation/policestation.component').then(m => m.PolicestationComponent),
+    canActivate: [AuthGuard],
+    title: 'Police Station'
+  },
   {
     path: 'cctv',
     loadComponent: () => import('./components/cctv/cctv.component').then(m => m.CCTVComponent),

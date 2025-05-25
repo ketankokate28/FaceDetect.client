@@ -74,7 +74,10 @@ onRowActivate(event: any) {
     // You can navigate, fetch details, etc.
   }
 }
-
+getFileNameWithoutExtension(filePath: string): string {
+  const fileName = filePath.split('\\').pop() || filePath;
+  return fileName.replace(/\.[^/.]+$/, ''); // removes the extension
+}
 closeImageViewer(modal: any): void {
   modal.close();
 }

@@ -1,0 +1,117 @@
+<div class="row control-box">
+    <div class="col-lg-8">
+      <div class="search-box">
+        <app-search-box (searchChange)="onSearchChanged($event)" placeholder="{{'Search' | translate}}" />
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <ul class="nav flex-row">
+        <li class="nav-item toolbaritem">
+          <a class="nav-link" href="javascript:;" (click)="openEditor()">
+            <i class="fa fa-plus"></i> {{'Add Police Station' | translate}}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div> 
+  <ngx-datatable
+    class="bootstrap"
+    [rows]="rows"
+    [columns]="[
+      { name: 'ID', prop: 'id' },
+      { name: 'Name', prop: 'name' },
+      { name: 'Country', prop: 'country' },
+      { name: 'State', prop: 'state' },
+      { name: 'Taluka', prop: 'taluka' },
+      { name: 'Pincode', prop: 'pincode' },
+      { name: 'Active', prop: 'isActive' },
+      { name: 'SHO Name', prop: 'stationHouseOfficerName' },
+      { name: 'Action', prop: 'action', cellTemplate: actionsTemplate }
+    ]"
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+    [limit]="10"
+    [reorderable]="true"
+    [loadingIndicator]="loadingIndicator"
+  >
+  </ngx-datatable>
+
+  <ng-template #actionsTemplate let-row="row">
+    <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditor(row)">
+      {{ 'COMMON.EDIT' | translate }}
+    </button>
+    <button class="btn btn-sm btn-outline-danger" (click)="deletePolicestation(row)">
+      {{ 'COMMON.DELETE' | translate }}
+    </button>
+  </ng-template>
+
+  <!-- Modal -->
+  <ng-template #editorModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">{{ policestationEdit.id ? ('COMMON.EDIT' | translate) : ('COMMON.ADD_NEW' | translate) }}</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <label for="name" class="form-label">{{ 'POLICESTATION NAME' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="policestationEdit.name" name="name" />
+          </div>
+          <div class="col-md-6">
+            <label for="country" class="form-label">{{ 'POLICESTATION COUNTRY' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="policestationEdit.country" name="country" />
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <label for="state" class="form-label">{{ 'POLICESTATION STATE' | translate }}</label>
+            <select class="form-select" [(ngModel)]="policestationEdit.state" name="state" (change)="onStateChange()">
+              <option *ngFor="let s of states" [value]="s.name">{{ s.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="taluka" class="form-label">{{ 'POLICESTATION TALUKA' | translate }}</label>
+            <select class="form-select" [(ngModel)]="policestationEdit.taluka" name="taluka">
+              <option *ngFor="let t of talukasForSelectedState" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <label for="pincode" class="form-label">{{ 'POLICESTATION PINCODE' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="policestationEdit.pincode" name="pincode" />
+          </div>
+          <div class="col-md-6">
+            <label for="isActive" class="form-label">{{ 'POLICESTATION STATUS' | translate }}</label>
+            <select class="form-select" [(ngModel)]="policestationEdit.isActive" name="isActive">
+              <option [value]="true">{{ 'COMMON.ACTIVE' | translate }}</option>
+              <option [value]="false">{{ 'COMMON.INACTIVE' | translate }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <label for="fullAddress" class="form-label">{{ 'POLICESTATION ADDRESS' | translate }}</label>
+            <textarea class="form-control" [(ngModel)]="policestationEdit.fullAddress" name="fullAddress"></textarea>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <label for="stationHouseOfficerName" class="form-label">{{ 'POLICESTATION SHO_NAME' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="policestationEdit.stationHouseOfficerName" name="stationHouseOfficerName" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="modal.dismiss()">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button class="btn btn-success" (click)="savePolicestation()">{{ 'COMMON.SAVE' | translate }}</button>
+    </div>
+  </ng-template>

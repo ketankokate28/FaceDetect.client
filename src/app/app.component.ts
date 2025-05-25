@@ -317,7 +317,11 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.authService.currentUser?.fullName ?? '';
   }
 
-  get canViewCustomers() {
+  get canViewCCTV() {
+    return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewCustomersPermission
+  }
+
+   get canViewPoliceStation() {
     return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewCustomersPermission
   }
 
