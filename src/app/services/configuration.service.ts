@@ -34,6 +34,7 @@ export class ConfigurationService {
 
   constructor() {
     this.loadLocalChanges();
+    this.loadConfig();
   }
 
   set language(value: string | null) {
@@ -94,6 +95,18 @@ export class ConfigurationService {
   get showDashboardBanner() {
     return this._showDashboardBanner != null ? this._showDashboardBanner : ConfigurationService.defaultShowDashboardBanner;
   }
+  public baseUrl: string = '';
+  private config: any= {};
+   loadConfig(): Promise<void> {
+    return fetch('/assets/config.json')
+      .then((res) => res.json())
+      .then((config) => {
+        this.config = config;
+        this.baseUrl = this.config.baseUrl ?? Utilities.baseUrl();
+      });
+  }
+  
+
 
   public static readonly appVersion = '9.19.0';
 
@@ -107,7 +120,7 @@ export class ConfigurationService {
   public static readonly defaultShowDashboardBanner = true;
   // ***End of defaults***
 
-  public baseUrl = environment.baseUrl ?? Utilities.baseUrl();
+  //public baseUrl = this.config?.baseUrl ?? Utilities.baseUrl();
   public fallbackBaseUrl = environment.fallbackBaseUrl;
 
   private _language: string | null = null;
