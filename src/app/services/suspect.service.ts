@@ -37,6 +37,13 @@ export class SuspectService {
     );
   }
 
+  uploadSuspectImages(suspectId: number, formData: FormData) {
+  return this.http.post(`${this.apiUrl}/${suspectId}/upload-images`, formData);
+}
+ getSuspectById(suspectId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${suspectId}`);
+  }
+
   private mapToSuspectModel(item: any): Suspect {
     return {
       id: item.suspect_id,

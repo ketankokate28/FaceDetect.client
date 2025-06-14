@@ -107,6 +107,10 @@
             <textarea class="form-control" [(ngModel)]="policestationEdit.fullAddress" name="fullAddress"></textarea>
           </div>
         </div>
+
+  <div class="col-md-12">
+            <label for="pincode" class="form-label">{{ 'Station House Officer (SHO)' | translate }}</label>
+              
 <input
   type="text"
   class="form-control"
@@ -117,7 +121,7 @@
 [ngModel]="getUserById(policestationEdit.stationHouseOfficerId)"
   (selectItem)="onUserSelected($event)"
   name="sho"
-/>
+/> </div> 
       </form>
     </div>
     <div class="modal-footer">

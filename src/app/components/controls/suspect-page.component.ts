@@ -61,6 +61,12 @@ export class SuspectPageComponent implements OnInit {
   @ViewChild('editorModal') editorModal!: TemplateRef<any>; // This line is required
   private modalRef: NgbModalRef | any;
   previewImage: string | null = null;
+  imageFiles: { [key: number]: File } = {};
+    imagePreviewUrl: string = '';
+uploadedImages: { [key: number]: string | Blob } = {};
+modalImageUrl: string | null = null;
+showImageModal: boolean = false;
+
   @ViewChild('imagePreviewModal') imagePreviewModal: any;
   private authService = inject(AuthService);
   constructor(
@@ -91,6 +97,19 @@ export class SuspectPageComponent implements OnInit {
       }
     );
   }
+handleMultiImageUpload(event: any, index: number): void {
+  const file = event.target.files[0];
+  if (file) {
+    this.imageFiles[index] = file;
+    if (index === 1) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
 
   // Filter rows based on search input
   onSearchChanged(value: string): void {
@@ -137,46 +156,107 @@ export class SuspectPageComponent implements OnInit {
     this.suspectEdit = {} as Suspect; // Reset form
     //this.modalService.open(this.editorModal, { size: 'lg' });
     this.previewImage = null; // Ensure that no previous image is shown
+    this.imageFiles = {};
+  this.uploadedImages = {}; // Clear any existing uploaded images
+    this.showImageModal = false;
+  this.modalImageUrl = null;
     this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });
   }
 
   saveSuspect(): void {
     
-    if (!this.suspectEdit.firstName) {
-      // If any of the fields are empty, show an alert or error message
-      alert("Both Suspect Name is required.");
-      return; // Prevent further execution if fields are missing
-    }
-    else if (this.selectedFile)
-    {
-      this.suspectEdit.image =this.selectedFile;
-    }
+    // if (!this.suspectEdit.firstName) {
+    //   // If any of the fields are empty, show an alert or error message
+    //   alert("Both Suspect Name is required.");
+    //   return; // Prevent further execution if fields are missing
+    // }
+    // else if (this.selectedFile)
+    // {
+    //   this.suspectEdit.image =this.selectedFile;
+    // }
+ if (!this.suspectEdit.firstName) {
+    alert("First Name is required.");
+    return;
+  }
 
+  // if (!this.imageFiles[1]) {
+  //   alert("Image 1 is required.");
+  //   return;
+  // }
     const request$ = this.suspectEdit.id
       ? this.suspectService.updateSuspect(this.suspectEdit.id, this.suspectEdit)
       : this.suspectService.addSuspect(this.suspectEdit);
   
-    request$.subscribe(
-      () => {
+request$.subscribe(
+    (response: any) => {
+      const suspectId = this.suspectEdit.id || response?.id;
+      if (suspectId) {
+        this.uploadImages(suspectId);
+      } else {
         this.loadSuspects();
-        if (this.modalRef) {
-          this.modalRef.close();
-        }
-      },
-      error => {
-        console.error('Error saving suspect:', error);
-        if(error?.error?.msg =="Token has expired")
-        {
-          this.authService.reLogin();
-        }
+        this.modalRef?.close();
       }
-    );
-  }
-    // Method to edit a suspect when the "Edit" button is clicked
-    editSuspect(suspect: Suspect) {
-      this.openEditor(suspect); // Open the modal with the suspect details for editing
+    },
+    error => {
+      console.error('Error saving suspect:', error);
+      if (error?.error?.msg === "Token has expired") {
+        this.authService.reLogin();
+      }
     }
-  
+  );
+  }
+
+uploadImages(suspectId: number): void {
+  const formData = new FormData();
+
+  for (let i = 1; i <= 5; i++) {
+    if (this.imageFiles[i]) {
+      formData.append(`image${i}`, this.imageFiles[i]);
+    }
+  }
+
+  this.suspectService.uploadSuspectImages(suspectId, formData).subscribe(
+    () => {
+      this.loadSuspects();
+      this.modalRef?.close();
+    },
+    error => {
+      console.error('Image upload failed:', error);
+      if (error?.error?.msg === "Token has expired") {
+        this.authService.reLogin();
+      }
+    }
+  );
+}
+
+
+    // Method to edit a suspect when the "Edit" button is clicked
+   editSuspect(suspect: Suspect) {
+  this.imageFiles = {}; // Clear any existing file data
+  this.uploadedImages = {}; // Clear any existing uploaded images
+
+  // Fetch the suspect details using the service
+  this.suspectService.getSuspectById(Number(suspect.id)).subscribe(response => {
+    // If the response contains base64, assign it to uploadedImages
+    this.uploadedImages = {
+      1: response.file_blob1_base64 || (response.file_path ? this.convertToBase64(response.file_path) : null),
+      2: response.file_blob2_base64 || (response.file_path2 ? this.convertToBase64(response.file_path2) : null),
+      3: response.file_blob3_base64 || (response.file_path3 ? this.convertToBase64(response.file_path3) : null),
+      4: response.file_blob4_base64 || (response.file_path4 ? this.convertToBase64(response.file_path4) : null),
+      5: response.file_blob5_base64 || (response.file_path5 ? this.convertToBase64(response.file_path5) : null)
+    };
+  this.showImageModal = false;
+  this.modalImageUrl = null;
+    // Open the editor with the suspect details
+    this.openEditor(suspect); // Open the modal with the suspect details for editing
+  });
+}
+  convertToBase64(filePath: string): string {
+  // This method needs to implement logic for converting file paths to base64
+  // If you are working with server-side images, you will need a service to fetch the image and convert it
+  // Example implementation (this will depend on your environment)
+  return `data:image/jpeg;base64,${filePath}`; // Placeholder, update with actual conversion logic
+}
   deleteSuspect(row: Suspect): void {
     if (row.id === undefined) {
       console.error('Cannot delete suspect: ID is undefined');
@@ -198,6 +278,36 @@ export class SuspectPageComponent implements OnInit {
       );
     }
   }
+
+showImagePreview(event: Event, index: number) {
+  // Prevent the page refresh
+  event.preventDefault();
+
+  const imageBlob = this.uploadedImages[index];  // Retrieve the image (Blob or Base64 string)
+  let imageUrl: string = '';  // Initialize imageUrl
+
+  // If the imageBlob is a Base64 string or Blob, handle accordingly
+  if (typeof imageBlob === 'string') {
+    // If it's already a Base64 string, use it directly
+    imageUrl = imageBlob;
+  } else if (imageBlob instanceof Blob) {
+    // If it's a Blob, create an object URL
+    imageUrl = URL.createObjectURL(imageBlob);
+  }
+
+  // Pass imageUrl to the modal for preview
+  this.showImageInModal(imageUrl);  // Show the image in the modal
+}
+
+showImageInModal(imageBase64: string) {
+  this.modalImageUrl = `data:image/jpeg;base64,${imageBase64}`;
+  this.showImageModal = true; // Show the modal
+}
+
+closeModal() {
+  this.showImageModal = false;
+  this.modalImageUrl = null;
+}
   selectedFile: File | null = null;
 
   // onFileSelected(event: Event): void {

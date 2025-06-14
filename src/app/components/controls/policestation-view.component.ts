@@ -42,21 +42,84 @@ export class PolicestationViewComponent implements OnInit {
   users: User[] = [];
   policestationEdit: PoliceStation = {} as PoliceStation;
   modalRef: any;
-  selectedUser: any = null;
+  selectedUser: User | null = null;
   states = [
   {
     name: 'Maharashtra',
     districts: [
-      { name: 'Pune', talukas: ['Haveli', 'Mulshi', 'Shirur'] },
-      { name: 'Nagpur', talukas: ['Nagpur Rural', 'Kamptee'] },
-      { name: 'Nashik', talukas: ['Sinnar', 'Igatpuri'] }
+      { name: 'Ahmednagar', talukas: ['Akole', 'Jamkhed', 'Karjat', 'Kopargaon', 'Nagar', 'Nevasa', 'Parner', 'Pathardi', 'Rahata', 'Rahuri', 'Sangamner', 'Shevgaon', 'Shrigonda', 'Shrirampur'] },
+      { name: 'Akola', talukas: ['Akola', 'Balapur', 'Murtijapur', 'Patur', 'Telhara'] },
+      { name: 'Amravati', talukas: ['Amravati', 'Achalpur', 'Anjangaon', 'Chandur Railway', 'Daryapur', 'Dhamangaon', 'Morshi', 'Teosa', 'Warud'] },
+      { name: 'Aurangabad', talukas: ['Aurangabad', 'Gangapur', 'Kannad', 'Khuldabad', 'Paithan', 'Phulambri', 'Sillod', 'Vaijapur'] },
+      { name: 'Beed', talukas: ['Ashti', 'Beed', 'Georai', 'Kaij', 'Majalgaon', 'Parli', 'Patoda', 'Shirur Kasar', 'Wadwani'] },
+      { name: 'Bhandara', talukas: ['Bhandara', 'Mohadi', 'Pauni', 'Sakoli', 'Tumsar'] },
+      { name: 'Buldhana', talukas: ['Buldhana', 'Chikhli', 'Deulgaon Raja', 'Jalgaon Jamod', 'Khamgaon', 'Lonar', 'Mehkar', 'Motala', 'Nandura', 'Sangrampur', 'Shegaon'] },
+      { name: 'Chandrapur', talukas: ['Ballarpur', 'Bhadravati', 'Chandrapur', 'Nagbhid', 'Rajura', 'Sindewahi', 'Warora'] },
+      { name: 'Dhule', talukas: ['Dhule', 'Sakri', 'Shirpur'] },
+      { name: 'Gadchiroli', talukas: ['Armori', 'Bhamragad', 'Dhanora', 'Etapalli', 'Gadchiroli', 'Korchi', 'Kurkheda', 'Mulchera', 'Sironcha'] },
+      { name: 'Gondia', talukas: ['Amgaon', 'Arjuni Morgaon', 'Deori', 'Gondia', 'Goregaon', 'Sadak Arjuni', 'Salekasa', 'Tirora'] },
+      { name: 'Hingoli', talukas: ['Aundha Nagnath', 'Basmath', 'Hingoli', 'Kalamnuri', 'Sengaon'] },
+      { name: 'Jalgaon', talukas: ['Amalner', 'Bhadgaon', 'Bhusawal', 'Chalisgaon', 'Chopda', 'Erandol', 'Jalgaon', 'Jamner', 'Pachora', 'Parola', 'Yawal'] },
+      { name: 'Jalna', talukas: ['Ambad', 'Bhokardan', 'Ghansawangi', 'Jalna', 'Mantha', 'Partur'] },
+      { name: 'Kolhapur', talukas: ['Ajara', 'Bhudargad', 'Chandgad', 'Gadhinglaj', 'Hatkanangle', 'Karvir', 'Panhala', 'Radhanagari', 'Shahuwadi', 'Shirol'] },
+      { name: 'Latur', talukas: ['Ahmedpur', 'Ausa', 'Chakur', 'Deoni', 'Jalkot', 'Latur', 'Nilanga', 'Renapur', 'Shirur Anantpal', 'Udgir'] },
+      { name: 'Mumbai City', talukas: ['Mumbai'] },
+      { name: 'Mumbai Suburban', talukas: ['Andheri', 'Borivali', 'Kurla'] },
+      { name: 'Nagpur', talukas: ['Nagpur Rural', 'Nagpur Urban', 'Hingna', 'Kamptee', 'Katol', 'Mauda', 'Narkhed', 'Parseoni', 'Ramtek', 'Saoner', 'Umred'] },
+      { name: 'Nanded', talukas: ['Ardhapur', 'Biloli', 'Bhokar', 'Deglur', 'Hadgaon', 'Himayatnagar', 'Kinwat', 'Loha', 'Mahur', 'Mudkhed', 'Mukhed', 'Naigaon', 'Nanded'] },
+      { name: 'Nandurbar', talukas: ['Akkalkuwa', 'Akrani', 'Nandurbar', 'Navapur', 'Shahada', 'Taloda'] },
+      { name: 'Nashik', talukas: ['Baglan', 'Chandwad', 'Deola', 'Dindori', 'Igatpuri', 'Kalwan', 'Malegaon', 'Nandgaon', 'Nashik', 'Niphad', 'Peth', 'Sinnar', 'Trimbak', 'Yeola'] },
+      { name: 'Osmanabad', talukas: ['Kalamb', 'Lohara', 'Osmanabad', 'Paranda', 'Tuljapur', 'Umarga', 'Vashi'] },
+      { name: 'Palghar', talukas: ['Dahanu', 'Jawhar', 'Mokhada', 'Palghar', 'Talasari', 'Vasai', 'Vikramgad', 'Wada'] },
+      { name: 'Parbhani', talukas: ['Gangakhed', 'Jintur', 'Manwath', 'Parbhani', 'Pathri', 'Purna', 'Sailu', 'Sonpeth'] },
+      { name: 'Pune', talukas: ['Baramati', 'Bhor', 'Daund', 'Haveli', 'Indapur', 'Junnar', 'Khed', 'Mulshi', 'Purandar', 'Shirur', 'Velhe'] },
+      { name: 'Raigad', talukas: ['Alibag', 'Karjat', 'Khalapur', 'Mahad', 'Mangaon', 'Murud', 'Panvel', 'Pen', 'Poladpur', 'Roha', 'Shrivardhan', 'Sudhagad', 'Tala', 'Uran'] },
+      { name: 'Ratnagiri', talukas: ['Chiplun', 'Dapoli', 'Guhagar', 'Khed', 'Lanja', 'Mandangad', 'Rajapur', 'Ratnagiri', 'Sangameshwar'] },
+      { name: 'Sangli', talukas: ['Atpadi', 'Jat', 'Kavathe Mahankal', 'Khanapur', 'Miraj', 'Palus', 'Shirala', 'Tasgaon', 'Walwa'] },
+      { name: 'Satara', talukas: ['Jaoli', 'Khandala', 'Koregaon', 'Mahabaleshwar', 'Man', 'Patan', 'Phaltan', 'Satara', 'Wai'] },
+      { name: 'Sindhudurg', talukas: ['Devgad', 'Kankavli', 'Kudal', 'Malvan', 'Sawantwadi', 'Vaibhavwadi', 'Vengurla'] },
+      { name: 'Solapur', talukas: ['Akkalkot', 'Barshi', 'Karmala', 'Madha', 'Malshiras', 'Mangalwedha', 'Mohol', 'Pandharpur', 'Sangola', 'Solapur North', 'Solapur South'] },
+      { name: 'Thane', talukas: ['Ambarnath', 'Bhiwandi', 'Kalyan', 'Murbad', 'Shahapur', 'Ulhasnagar'] },
+      { name: 'Wardha', talukas: ['Arvi', 'Ashti', 'Deoli', 'Hinganghat', 'Samudrapur', 'Seloo', 'Wardha'] },
+      { name: 'Washim', talukas: ['Karanja', 'Malegaon', 'Mangrulpir', 'Manora', 'Risod', 'Washim'] },
+      { name: 'Yavatmal', talukas: ['Arni', 'Babulgaon', 'Darwha', 'Digras', 'Ghatanji', 'Kalamb', 'Kelapur', 'Mahagaon', 'Ner', 'Pusad', 'Ralegaon', 'Umarkhed', 'Wani', 'Yavatmal'] }
     ]
   },
   {
     name: 'Gujarat',
     districts: [
-      { name: 'Ahmedabad', talukas: ['Dascroi', 'Sanand'] },
-      { name: 'Surat', talukas: ['Choryasi', 'Bardoli'] }
+      { name: 'Ahmedabad', talukas: ['Ahmedabad City', 'Dascroi', 'Sanand', 'Detroj-Rampura', 'Dholka', 'Bavla'] },
+      { name: 'Amreli', talukas: ['Amreli', 'Bagasara', 'Dhari', 'Jafrabad', 'Khambha', 'Kunkavav', 'Lathi', 'Rajula', 'Savarkundla'] },
+      { name: 'Anand', talukas: ['Anand', 'Anklav', 'Borsad', 'Petlad', 'Sojitra', 'Tarapur', 'Umreth'] },
+      { name: 'Aravalli', talukas: ['Bayad', 'Bhiloda', 'Dhansura', 'Malpur', 'Meghraj', 'Modasa'] },
+      { name: 'Banaskantha', talukas: ['Amirgadh', 'Bhabhar', 'Danta', 'Dantiwada', 'Deesa', 'Kankrej', 'Palanpur', 'Tharad', 'Vadgam', 'Vav'] },
+      { name: 'Bharuch', talukas: ['Amod', 'Ankleshwar', 'Bharuch', 'Hansot', 'Jambusar', 'Jhagadia', 'Valia', 'Vagra'] },
+      { name: 'Bhavnagar', talukas: ['Bhavnagar', 'Gariadhar', 'Ghogha', 'Mahuva', 'Palitana', 'Sihor', 'Talaja', 'Umrala'] },
+      { name: 'Botad', talukas: ['Botad', 'Barwala', 'Gadhada', 'Ranpur'] },
+      { name: 'Chhota Udaipur', talukas: ['Bodeli', 'Chhota Udaipur', 'Jetpur Pavi', 'Kawant', 'Naswadi', 'Sankheda'] },
+      { name: 'Dahod', talukas: ['Dahod', 'Devgadh Baria', 'Fatepura', 'Garbhada', 'Limkheda', 'Sanjeli', 'Zalod'] },
+      { name: 'Dang', talukas: ['Ahwa'] },
+      { name: 'Devbhoomi Dwarka', talukas: ['Dwarka', 'Kalyanpur', 'Khambhalia', 'Bhanvad'] },
+      { name: 'Gandhinagar', talukas: ['Gandhinagar', 'Dehgam', 'Kalol', 'Mansa'] },
+      { name: 'Gir Somnath', talukas: ['Kodinar', 'Veraval', 'Una', 'Sutrapada', 'Talala'] },
+      { name: 'Jamnagar', talukas: ['Jamnagar', 'Jodiya', 'Kalavad', 'Lalpur', 'Dhrol'] },
+      { name: 'Junagadh', talukas: ['Junagadh', 'Keshod', 'Manavadar', 'Malia', 'Mangrol', 'Vanthali', 'Visavadar'] },
+      { name: 'Kheda', talukas: ['Kapadvanj', 'Kathlal', 'Kheda', 'Mahemdavad', 'Mahudha', 'Matar', 'Mehmedabad', 'Nadiad', 'Thasra', 'Vaso'] },
+      { name: 'Kutch', talukas: ['Abdasa', 'Anjar', 'Bhachau', 'Bhuj', 'Gandhidham', 'Lakhpat', 'Mandvi', 'Mundra', 'Nakhatrana', 'Rapar'] },
+      { name: 'Mehsana', talukas: ['Becharaji', 'Kadi', 'Kheralu', 'Mehsana', 'Satlasana', 'Unjha', 'Vadnagar', 'Visnagar', 'Vijapur'] },
+      { name: 'Morbi', talukas: ['Halvad', 'Morbi', 'Tankara', 'Wankaner', 'Maliya'] },
+      { name: 'Narmada', talukas: ['Dediapada', 'Garudeshwar', 'Nandod', 'Sagbara', 'Tilakwada'] },
+      { name: 'Navsari', talukas: ['Chikhli', 'Gandevi', 'Jalalpore', 'Navsari', 'Vansda'] },
+      { name: 'Panchmahal', talukas: ['Ghoghamba', 'Godhra', 'Halol', 'Jambughoda', 'Kalol', 'Lunawada', 'Morva Hadaf', 'Santrampur', 'Shehera'] },
+      { name: 'Patan', talukas: ['Chanasma', 'Harij', 'Patan', 'Radhanpur', 'Sami', 'Sankheswar', 'Santalpur', 'Sarasvati', 'Shankheshwar'] },
+      { name: 'Porbandar', talukas: ['Porbandar', 'Kutiyana', 'Ranavav'] },
+      { name: 'Rajkot', talukas: ['Dhoraji', 'Gondal', 'Jamkandorna', 'Jasdan', 'Jetpur', 'Kotda Sangani', 'Lodhika', 'Paddhari', 'Rajkot'] },
+      { name: 'Sabarkantha', talukas: ['Bayad', 'Idar', 'Himatnagar', 'Khedbrahma', 'Malpur', 'Modasa', 'Poshina', 'Prantij', 'Talod', 'Vadali', 'Vijaynagar'] },
+      { name: 'Surat', talukas: ['Bardoli', 'Choryasi', 'Kamrej', 'Mandvi', 'Mangrol', 'Mahuva', 'Olpad', 'Palsana', 'Surat City', 'Umarpada'] },
+      { name: 'Surendranagar', talukas: ['Chotila', 'Dhrangadhra', 'Lakhtar', 'Limbdi', 'Muli', 'Sayla', 'Thangadh', 'Wadhwan'] },
+      { name: 'Tapi', talukas: ['Dolvan', 'Kukarmunda', 'Nizar', 'Songadh', 'Uchchhal', 'Vyara'] },
+      { name: 'Vadodara', talukas: ['Chhota Udaipur', 'Dabhoi', 'Karjan', 'Padra', 'Savli', 'Sinor', 'Vadodara'] },
+      { name: 'Valsad', talukas: ['Dharampur', 'Kaprada', 'Pardi', 'Umbergaon', 'Valsad'] }
     ]
   }
 ];
@@ -73,7 +136,8 @@ talukasForSelectedState: string[] = [];
 
   ngOnInit(): void {
     this.loadPolicestations();
-     this.loadUsers();
+    this.loadUsers();
+     this.selectedUser = this.getUserById(this.policestationEdit.stationHouseOfficerId);
   }
 loadUsers() {
   this.accountService.getUsersAndRoles().subscribe({
@@ -133,9 +197,9 @@ openEditor(row?: PoliceStation) {
   const selectedDistrict = this.districtsForSelectedState.find(d => d.name === this.policestationEdit.district);
   this.talukasForSelectedDistrict = selectedDistrict?.talukas || [];
 
-this.selectedUser = this.users.find(
-  user => user.id == String(row?.stationHouseOfficerId)
-);
+// this.selectedUser = this.users.find(
+//   user => user.id == String(row?.stationHouseOfficerId)
+// );
     
 
   this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });

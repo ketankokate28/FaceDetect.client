@@ -211,24 +211,35 @@
           </div>
         </div>
   
-        <!-- Image Upload -->
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label for="image">Image</label>
-            <div class="d-flex align-items-center">
-              <input type="file" id="image" (change)="handleImageUpload($event)" class="form-control me-2">
-              <button
-                type="button"
-                class="btn btn-outline-secondary btn-sm"
-                *ngIf="previewImage"
-                (click)="openImagePreview()"
-                title="View Image"
-                [disabled]="!previewImage"> <!-- Disable if no previewImage -->
-                <i class="fa fa-eye"></i>
-              </button>
-            </div>
-          </div>
-        </div>
+        <!-- Image Uploads (5 images, 1st mandatory) -->
+<!-- Main Content Section (Your Existing Content) -->
+<div class="col-md-12">
+  <label>Upload Suspect Images</label>
+  <div class="row">
+    <div class="col-md-4" *ngFor="let index of [1, 2, 3, 4, 5]">
+      <div class="mb-3">
+        <label>Image {{ index }}{{ index === 1 ? ' *' : '' }}</label>
+        <input
+          type="file"
+          class="form-control"
+          (change)="handleMultiImageUpload($event, index)"
+        />
+        <!-- Link to show image preview if the image is selected -->
+        <a *ngIf="uploadedImages[index]" href="#" (click)="showImagePreview($event, index)">Show Image</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal to display image preview -->
+<div *ngIf="showImageModal">
+  <div class="modal-content">
+    <img [src]="modalImageUrl" class="img-fluid" alt="Image Preview" />
+    <button (click)="closeModal()">Close</button>
+  </div>
+</div>
+
+
       </div>
       
   <div class="modal-footer">
@@ -248,12 +259,12 @@
   
     </form>
   </div>
-  <ng-template #imagePreviewModal let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title">Suspect Image</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
-    </div>
-    <div class="modal-body text-center">
-      <img *ngIf="previewImage" [src]="previewImage" class="img-fluid" alt="Suspect Image">
-    </div>
-  </ng-template>
+<ng-template #imagePreviewModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Image Preview</h5>
+    <button type="button" class="btn-close" (click)="modal.close()"></button>
+  </div>
+  <div class="modal-body">
+    <img [src]="imagePreviewUrl" class="img-fluid" alt="Image Preview" />
+  </div>
+</ng-template>
