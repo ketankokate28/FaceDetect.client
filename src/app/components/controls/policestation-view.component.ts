@@ -137,7 +137,6 @@ talukasForSelectedState: string[] = [];
   ngOnInit(): void {
     this.loadPolicestations();
     this.loadUsers();
-     this.selectedUser = this.getUserById(this.policestationEdit.stationHouseOfficerId);
   }
 loadUsers() {
   this.accountService.getUsersAndRoles().subscribe({
@@ -184,7 +183,7 @@ userFormatter = (user: any) => user.fullName || '';
 
 getUserById(id: string | number | null): User | null {
   if (!id) return null;
-  return this.users.find(u => u.id === id.toString()) || null;
+  return this.users.find(u => u.id == id.toString()) || null;
 }
 openEditor(row?: PoliceStation) {
   this.policestationEdit = row ? { ...row } : {} as PoliceStation;
@@ -196,11 +195,7 @@ openEditor(row?: PoliceStation) {
   // Now resolve talukas based on district
   const selectedDistrict = this.districtsForSelectedState.find(d => d.name === this.policestationEdit.district);
   this.talukasForSelectedDistrict = selectedDistrict?.talukas || [];
-
-// this.selectedUser = this.users.find(
-//   user => user.id == String(row?.stationHouseOfficerId)
-// );
-    
+this.selectedUser = this.getUserById(this.policestationEdit.stationHouseOfficerId);
 
   this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });
 }
@@ -208,6 +203,7 @@ onUserSelected(event: any) {
   const user = event.item;
   this.policestationEdit.stationHouseOfficerId = user.id;
   this.policestationEdit.stationHouseOfficerName = user.fullName;
+  console.log(this.policestationEdit.stationHouseOfficerName); // Debugging line
 }
 onStateChange() {
   const selectedState = this.states.find(s => s.name === this.policestationEdit.state);
