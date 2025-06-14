@@ -3,6 +3,7 @@ export interface PoliceStation {
   name: string;
   country: string;
   state: string;
+  district?: string;
   taluka: string;
   pincode: string;
   fullAddress: string | null;

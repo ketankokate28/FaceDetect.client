@@ -15,7 +15,7 @@
     </div>
   </div> 
   <ngx-datatable
-    class="bootstrap"
+    bootstrap ngx-datatable bootstrap
     [rows]="rows"
     [columns]="[
       { name: 'ID', prop: 'id' },
@@ -40,78 +40,88 @@
 
   <ng-template #actionsTemplate let-row="row">
     <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditor(row)">
-      {{ 'COMMON.EDIT' | translate }}
+      {{ 'Edit' | translate }}
     </button>
     <button class="btn btn-sm btn-outline-danger" (click)="deletePolicestation(row)">
-      {{ 'COMMON.DELETE' | translate }}
+      {{ 'Delete' | translate }}
     </button>
   </ng-template>
 
   <!-- Modal -->
   <ng-template #editorModal let-modal>
     <div class="modal-header">
-      <h5 class="modal-title">{{ policestationEdit.id ? ('COMMON.EDIT' | translate) : ('COMMON.ADD_NEW' | translate) }}</h5>
+      <h5 class="modal-title">{{ policestationEdit.id ? ('Edit' | translate) : ('New' | translate) }}</h5>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
     </div>
     <div class="modal-body">
       <form>
         <div class="row mb-2">
           <div class="col-md-6">
-            <label for="name" class="form-label">{{ 'POLICESTATION NAME' | translate }}</label>
+            <label for="name" class="form-label">{{ 'Police Station Name' | translate }}</label>
             <input type="text" class="form-control" [(ngModel)]="policestationEdit.name" name="name" />
           </div>
           <div class="col-md-6">
-            <label for="country" class="form-label">{{ 'POLICESTATION COUNTRY' | translate }}</label>
-            <input type="text" class="form-control" [(ngModel)]="policestationEdit.country" name="country" />
+            <label for="country" class="form-label">{{ 'Country' | translate }}</label>
+            <input type="text" class="form-control"  name="country" readonly [value]="'India'"/>
           </div>
         </div>
 
         <div class="row mb-2">
           <div class="col-md-6">
-            <label for="state" class="form-label">{{ 'POLICESTATION STATE' | translate }}</label>
+            <label for="state" class="form-label">{{ 'State' | translate }}</label>
             <select class="form-select" [(ngModel)]="policestationEdit.state" name="state" (change)="onStateChange()">
               <option *ngFor="let s of states" [value]="s.name">{{ s.name }}</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label for="taluka" class="form-label">{{ 'POLICESTATION TALUKA' | translate }}</label>
-            <select class="form-select" [(ngModel)]="policestationEdit.taluka" name="taluka">
-              <option *ngFor="let t of talukasForSelectedState" [value]="t">{{ t }}</option>
-            </select>
-          </div>
+<div class="col-md-6">
+  <label for="district" class="form-label">{{ 'District' | translate }}</label>
+  <select class="form-select" [(ngModel)]="policestationEdit.district" name="district" (change)="onDistrictChange()">
+    <option *ngFor="let d of districtsForSelectedState" [value]="d.name">{{ d.name }}</option>
+  </select>
+</div>
+         <div class="col-md-6">
+  <label for="taluka" class="form-label">{{ 'Taluka' | translate }}</label>
+  <select class="form-select" [(ngModel)]="policestationEdit.taluka" name="taluka">
+    <option *ngFor="let t of talukasForSelectedDistrict" [value]="t">{{ t }}</option>
+  </select>
+</div>
         </div>
 
         <div class="row mb-2">
           <div class="col-md-6">
-            <label for="pincode" class="form-label">{{ 'POLICESTATION PINCODE' | translate }}</label>
+            <label for="pincode" class="form-label">{{ 'Pincode' | translate }}</label>
             <input type="text" class="form-control" [(ngModel)]="policestationEdit.pincode" name="pincode" />
           </div>
           <div class="col-md-6">
-            <label for="isActive" class="form-label">{{ 'POLICESTATION STATUS' | translate }}</label>
+            <label for="isActive" class="form-label">{{ 'Status' | translate }}</label>
             <select class="form-select" [(ngModel)]="policestationEdit.isActive" name="isActive">
-              <option [value]="true">{{ 'COMMON.ACTIVE' | translate }}</option>
-              <option [value]="false">{{ 'COMMON.INACTIVE' | translate }}</option>
+              <option [value]=true>{{ 'Active' | translate }}</option>
+              <option [value]=false>{{ 'Inactive' | translate }}</option>
             </select>
           </div>
         </div>
 
         <div class="row mb-2">
           <div class="col-md-12">
-            <label for="fullAddress" class="form-label">{{ 'POLICESTATION ADDRESS' | translate }}</label>
+            <label for="fullAddress" class="form-label">{{ 'Address' | translate }}</label>
             <textarea class="form-control" [(ngModel)]="policestationEdit.fullAddress" name="fullAddress"></textarea>
           </div>
         </div>
-
-        <div class="row mb-2">
-          <div class="col-md-12">
-            <label for="stationHouseOfficerName" class="form-label">{{ 'POLICESTATION SHO_NAME' | translate }}</label>
-            <input type="text" class="form-control" [(ngModel)]="policestationEdit.stationHouseOfficerName" name="stationHouseOfficerName" />
-          </div>
-        </div>
+<input
+  type="text"
+  class="form-control"
+  [ngbTypeahead]="searchUsers"
+  [resultFormatter]="userFormatter"
+  [inputFormatter]="userFormatter"
+  [editable]="true"
+[ngModel]="getUserById(policestationEdit.stationHouseOfficerId)"
+  (selectItem)="onUserSelected($event)"
+  name="sho"
+/>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="modal.dismiss()">{{ 'COMMON.CANCEL' | translate }}</button>
-      <button class="btn btn-success" (click)="savePolicestation()">{{ 'COMMON.SAVE' | translate }}</button>
+      <button class="btn btn-secondary" (click)="modal.dismiss()">{{ 'CANCEL' | translate }}</button>
+      <button class="btn btn-success" (click)="savePolicestation()">{{ 'SAVE' | translate }}</button>
     </div>
   </ng-template>
