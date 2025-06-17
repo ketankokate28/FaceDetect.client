@@ -126,15 +126,16 @@
       <!-- Suspect Image -->
       <div class="col-md-6 text-center">
         <h6 class="mb-2">Suspect Photo</h6>
+        
         <img
-          *ngIf="suspectPhoto"
-          [src]="'data:image/jpeg;base64,' + suspectPhoto"
-          alt="Suspect Photo"
-          class="img-fluid border rounded shadow-sm"
-          [style.transform]="imageRotation"
-          style="max-height: 70vh; object-fit: contain;"
-          ngxPinchZoom
-        />
+  *ngIf="suspectPhoto"
+  [src]="'data:image/jpeg;base64,' + suspectPhoto"
+  alt="Suspect Photo"
+  class="img-fluid border rounded shadow-sm"
+  [style.transform]="imageRotation"
+  style="max-height: 70vh; object-fit: contain; cursor: zoom-in;"
+ (click)="openViewerForImage($event)"
+/>
         <div *ngIf="!suspectPhoto" class="text-muted">No suspect photo available.</div>
       </div>
 
@@ -146,15 +147,15 @@
       <!-- Captured Frame -->
       <div class="col-md-5 text-center">
         <h6 class="mb-2">Captured Frame</h6>
-        <img
-          *ngIf="selectedImageUrl"
-          [src]="selectedImageUrl"
-          alt="Captured Frame"
-          class="img-fluid border rounded shadow-sm"
-          [style.transform]="imageRotation"
-          style="max-height: 70vh; object-fit: contain;"
-          ngxPinchZoom
-        />
+      <img
+  *ngIf="selectedImageUrl"
+  [src]="selectedImageUrl"
+  alt="Captured Frame"
+  class="img-fluid border rounded shadow-sm"
+  [style.transform]="imageRotation"
+  style="max-height: 70vh; object-fit: contain; cursor: zoom-in;"
+ (click)="openViewerForImage($event)"
+/>
       </div>
     </div>
   </div>

@@ -7,7 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { SearchBoxComponent } from '../controls/search-box.component';
 import { AuthService } from '../../services/auth.service';
-
+import { AfterViewInit, ElementRef } from '@angular/core';
+import Viewer from 'viewerjs';
 @Component({
   selector: 'app-matchfacelog-summary',
   templateUrl: './matchfacelog-summary.component.html',
@@ -25,6 +26,8 @@ selectedSuspectName = '';
 imageRotation: string = 'rotate(0deg)';
 rotationAngle: number = 0;
 @ViewChild('imageViewer', { static: true }) imageViewer!: TemplateRef<any>;
+@ViewChild('viewerImage', { static: false }) viewerImage!: ElementRef;
+viewerInstance: any;
 suspectPhoto: string = '';
 selectedCaptureDate: string = '';  // Store the capture date
 isFullscreen: boolean = false; // Track fullscreen state
@@ -79,7 +82,12 @@ getFileNameWithoutExtension(filePath: string): string {
   return fileName.replace(/\.[^/.]+$/, ''); // removes the extension
 }
 closeImageViewer(modal: any): void {
-  modal.close();
+  // modal.close();
+   modal.dismiss();
+  if (this.viewerInstance) {
+    this.viewerInstance.destroy();
+    this.viewerInstance = null;
+  }
 }
 // openImage(log: any): void {
 //   this.selectedImageUrl = `data:image/jpeg;base64,${log.frameBase64}`;
@@ -90,8 +98,37 @@ closeImageViewer(modal: any): void {
 openImage(log: any, imageViewerModal: any): void {
   this.selectedImageUrl = `data:image/jpeg;base64,${log.frameBase64}`;
   this.selectedCaptureDate = log.captureTime;  // Set capture date
-  this.modalService.open(imageViewerModal, { size: 'xl', centered: true });
+  const modalRef = this.modalService.open(imageViewerModal, { size: 'xl', centered: true });
+   
 }
+openViewerForImage(event: MouseEvent): void {
+  const imgElement = event.target as HTMLImageElement;
+
+  if (!imgElement || !(imgElement instanceof HTMLImageElement)) {
+    console.warn('Clicked element is not an image');
+    return;
+  }
+
+  if (this.viewerInstance) {
+    this.viewerInstance.destroy();
+  }
+
+  this.viewerInstance = new Viewer(imgElement, {
+    toolbar: true,
+    navbar: true,
+    title: true,
+    scalable: true,
+    zoomable: true,
+    movable: true,
+    fullscreen: true,
+    viewed: () => {
+      this.viewerInstance.zoomTo(1);
+    }
+  });
+
+  this.viewerInstance.show();
+}
+
 
 openIncidentPopup(suspectId: number, suspectName: string, event: MouseEvent): void {
   event.preventDefault();  // prevent <a> default behavior

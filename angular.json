@@ -33,6 +33,7 @@
               }
             ],
             "styles": [
+              "node_modules/viewerjs/dist/viewer.css",
               {
                 "input": "src/styles.scss"
               },
@@ -98,6 +99,7 @@
               }
             },
             "scripts": [
+              "node_modules/viewerjs/dist/viewer.js",
               "src/app/assets/scripts/alertify.js"
             ]
           },
