@@ -163,11 +163,11 @@
           </div>
         </div>
   
-        <!-- Distinguishing Marks -->
+     <!-- Facial Features -->
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="aliases">Aliases </label>
-            <input type="text" id="aliases" class="form-control" [(ngModel)]="suspectEdit.aliases" name="aliases">
+            <label for="shoeSize">Shoe Size</label>
+            <input type="text"  id="shoeSize" class="form-control" [(ngModel)]="suspectEdit.shoeSize" name="shoeSize">
           </div>
         </div>
   
@@ -195,21 +195,28 @@
           </div>
         </div>
   
-        <!-- Facial Features -->
+   
+         <!-- Distinguishing Marks -->
         <div class="col-md-6">
           <div class="mb-3">
-            <label for="shoeSize">Shoe Size</label>
-            <input type="text"  id="shoeSize" class="form-control" [(ngModel)]="suspectEdit.shoeSize" name="shoeSize">
+            <label for="aliases">FIR/ADR No. </label>
+            <input type="text" id="aliases" class="form-control" [(ngModel)]="suspectEdit.aliases" name="aliases">
           </div>
         </div>
-  
         <!-- Gait Analysis -->
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label for="description">Description</label>
-            <input type="text"  id="description" class="form-control" [(ngModel)]="suspectEdit.description" name="description">
-          </div>
-        </div>
+      <div class="col-md-12">  <!-- Full width instead of col-md-6 -->
+  <div class="mb-3">
+    <label for="description">Description</label>
+    <textarea
+      id="description"
+      class="form-control"
+      [(ngModel)]="suspectEdit.description"
+      name="description"
+      rows="2" 
+      style="resize: vertical;"
+    ></textarea>
+  </div>
+</div>
   
         <!-- Image Uploads (5 images, 1st mandatory) -->
 <!-- Main Content Section (Your Existing Content) -->
