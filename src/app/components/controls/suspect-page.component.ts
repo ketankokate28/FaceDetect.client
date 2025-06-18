@@ -191,10 +191,13 @@ request$.subscribe(
     (response: any) => {
       const suspectId = this.suspectEdit.id || response?.id;
       if (suspectId) {
-        this.uploadImages(suspectId);
-      } else {
-        this.loadSuspects();
-        this.modalRef?.close();
+        const hasImages = Object.values(this.imageFiles).some(file => !!file);
+        if (hasImages) {
+          this.uploadImages(suspectId);
+        } else {
+          this.loadSuspects();
+          this.modalRef?.close(); // ✅ Close if no images
+        }
       }
     },
     error => {
@@ -208,13 +211,17 @@ request$.subscribe(
 
 uploadImages(suspectId: number): void {
   const formData = new FormData();
-
+  let hasImage = false;
   for (let i = 1; i <= 5; i++) {
     if (this.imageFiles[i]) {
       formData.append(`image${i}`, this.imageFiles[i]);
+      hasImage = true;
     }
   }
-
+if (!hasImage) {
+    console.log('No images to upload, skipping API call.');
+    return; // ✅ Don't call the API if no images were added
+  }
   this.suspectService.uploadSuspectImages(suspectId, formData).subscribe(
     () => {
       this.loadSuspects();
