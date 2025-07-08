@@ -49,7 +49,7 @@ export class SuspectPageComponent implements OnInit {
     { name: 'Shoulder Width (Cm)', prop: 'shoulderWidthCm' },
     { name: 'Torso Height (Cm)', prop: 'torsoHeightCm' },
     { name: 'Leg Length (Cm)', prop: 'legLengthCm' },
-    { name: 'Shoe Size', prop: 'shoeSize' },
+    { name: 'Distribution To', prop: 'distributionto' },
     { name: 'Assigned Officer', prop: 'aliases' },
     { name: 'Facial Image', prop: 'facialImage' },
     { name: 'file_blob_base64', prop: 'file_blob_base64' },
@@ -76,6 +76,10 @@ subnodes: Subnode[] = [];
 selectedTenantId: number = 0;
 selectedNodeId: number = 0;
 disableHierarchy: boolean = false;
+
+//Hide below fields 
+hideField = true;
+
   @ViewChild('imagePreviewModal') imagePreviewModal: any;
   private authService = inject(AuthService);
   constructor(
@@ -262,6 +266,7 @@ handleMultiImageUpload(event: any, index: number): void {
  // Method to open modal for adding new CCTV
   addSuspect(): void {
     this.suspectEdit = {} as Suspect; // Reset form
+    this.suspectEdit.distributionto = 'P';
     //this.modalService.open(this.editorModal, { size: 'lg' });
     this.previewImage = null; // Ensure that no previous image is shown
     this.imageFiles = {};

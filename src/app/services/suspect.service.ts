@@ -60,7 +60,7 @@ getSuspects(subnodeId: number): Observable<Suspect[]> {
       shoulderWidthCm: item.shoulder_width_cm,
       torsoHeightCm: item.torso_height_cm,
       legLengthCm: item.leg_length_cm,
-      shoeSize: item.shoe_size,
+      distributionto: item.distribution_to,
       hairColor: item.hair_color,
       eyeColor: item.eye_color,
       aliases: item.aliases,
@@ -101,7 +101,7 @@ getSuspects(subnodeId: number): Observable<Suspect[]> {
     safeAppend('shoulder_width_cm', suspect.shoulderWidthCm);
     safeAppend('torso_height_cm', suspect.torsoHeightCm);
     safeAppend('leg_length_cm', suspect.legLengthCm);
-    safeAppend('shoe_size', suspect.shoeSize);
+    safeAppend('distribution_to', suspect.distributionto);
   
     // Appearance
     safeAppend('hair_color', suspect.hairColor);

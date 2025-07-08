@@ -115,3 +115,8 @@ input.form-control {
   max-height: 80vh;  /* Ensure the image doesn't exceed the container height */
   object-fit: contain; /* Maintain aspect ratio and avoid stretching */
 }
+
+.small-legend {
+  font-size: 0.9rem; /* adjust size as needed */
+  font-weight: bold;
+}

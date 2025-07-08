@@ -11,7 +11,7 @@ export interface Suspect {
   shoulderWidthCm?: number;
   torsoHeightCm?: number;
   legLengthCm?: number;
-  shoeSize?: number;
+  distributionto?: string;
 
   hairColor?: string;
   eyeColor?: string;
