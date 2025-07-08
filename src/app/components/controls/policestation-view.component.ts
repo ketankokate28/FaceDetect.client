@@ -32,6 +32,7 @@ export class PolicestationViewComponent implements OnInit {
     { name: 'Contact Number', prop: 'contactNumber' },
     { name: 'State', prop: 'state' },
     { name: 'Taluka', prop: 'taluka' },
+    { name: 'District', prop: 'district'},
     { name: 'Status', prop: 'status' },
     { name: 'Action', prop: 'action', cellTemplate: this.actionsTemplate }
   ];
