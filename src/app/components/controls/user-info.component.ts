@@ -475,6 +475,7 @@ if (this.tenants?.length) {
         this.allRoles.unshift(new Role(role));
       }
     }
+    this.userEdit.roles = [...user.roles];
   }
 
   get canViewAllRoles() {
