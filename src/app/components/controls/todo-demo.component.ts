@@ -147,7 +147,7 @@ export class TodoDemoComponent implements OnInit, OnDestroy {
 
   fetch(callback: (data: Todo[]) => void) {
      // Call the API through your CctvService
-     this.cctvService.getCctvs().subscribe({
+     this.cctvService.getCctvs(undefined).subscribe({
       next: (response) => {
         const data = response;  // Assuming the response is an array of Todos
         callback(data);

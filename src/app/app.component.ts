@@ -318,25 +318,31 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   get canViewCCTV() {
-    return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewCustomersPermission
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewCustomersPermission
   }
 
    get canViewPoliceStation() {
-    return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewCustomersPermission
+     return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewCustomersPermission
   }
 
   get canViewNotifications() {
-    return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewProductsPermission
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewProductsPermission
   }
 
   get canViewFaceMatch() {
-    return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewProductsPermission
+     return this.accountService.isAdmin || this.accountService.isUser;
+    //return this.accountService.userHasPermission(Permissions.viewUsers); // eg. viewProductsPermission
   }
 
   get canViewAdmin() {
-    return !!true; // eg. viewOrdersPermission
+    return this.accountService.isAdmin;
+    //return !!true; // eg. viewOrdersPermission
   }
   get canViewSuspect() {
-    return !!true; // eg. viewOrdersPermission
+    return this.accountService.isAdmin || this.accountService.isUser;
+    //return !!true; // eg. viewOrdersPermission
   }
 }

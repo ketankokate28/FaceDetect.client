@@ -177,4 +177,18 @@ export class AccountService {
   get currentUser() {
     return this.authService.currentUser;
   }
+  get isAdmin(): boolean {
+  const roles = this.authService.currentUser?.roles;
+  if (!roles) {
+    return false; // no roles defined
+  }
+  return roles.includes('admin');
+}
+get isUser(): boolean {
+  const roles = this.authService.currentUser?.roles;
+  if (!roles) {
+    return false; // no roles defined
+  }
+  return roles.includes('user');
+}
 }

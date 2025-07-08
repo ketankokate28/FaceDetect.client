@@ -66,10 +66,12 @@ export class SettingsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get canViewUsers() {
-    return this.accountService.userHasPermission(Permissions.viewUsers);
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.viewUsers);
   }
 
   get canViewRoles() {
-    return this.accountService.userHasPermission(Permissions.viewRoles);
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.viewRoles);
   }
 }

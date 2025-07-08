@@ -15,26 +15,26 @@ export class PoliceStationService {
 
   // Get all police stations
   getPoliceStations(): Observable<PoliceStation[]> {
-    return this.http.get<PoliceStation[]>(`${this.baseUrl}/policestation/`);
+    return this.http.get<PoliceStation[]>(`${this.baseUrl}/subnode/`);
   }
 
   // Get a specific police station by ID (optional)
   getPoliceStation(id: number): Observable<PoliceStation> {
-    return this.http.get<PoliceStation>(`${this.baseUrl}/policestation/${id}`);
+    return this.http.get<PoliceStation>(`${this.baseUrl}/subnode/${id}`);
   }
 
   // Create a new police station
   createPoliceStation(data: PoliceStation): Observable<PoliceStation> {
-    return this.http.post<PoliceStation>(`${this.baseUrl}/policestation/`, data);
+    return this.http.post<PoliceStation>(`${this.baseUrl}/subnode/`, data);
   }
 
   // Update an existing police station
   updatePoliceStation(id: number, data: PoliceStation): Observable<any> {
-    return this.http.put(`${this.baseUrl}/policestation/${id}`, data);
+    return this.http.put(`${this.baseUrl}/subnode/${id}`, data);
   }
 
   // Delete a police station
   deletePoliceStation(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/policestation/${id}`);
+    return this.http.delete(`${this.baseUrl}/subnode/${id}`);
   }
 }

@@ -4,7 +4,7 @@
 // (c) 2024 /mit-license
 // ---------------------------------------
 
-import { Component, OnInit, Input, inject, input, output, viewChild } from '@angular/core';
+import { Component, OnInit, Input, inject, input, output, viewChild, ChangeDetectorRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgModel, NgForm, FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,10 +17,12 @@ import { User } from '../../models/user.model';
 import { UserEdit } from '../../models/user-edit.model';
 import { Role } from '../../models/role.model';
 import { Permissions } from '../../models/permission.model';
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { AutofocusDirective } from '../../directives/autofocus.directive';
 import { EqualValidator } from '../../directives/equal-validator.directive';
 import { AuthService } from '../../services/auth.service';
+import { Tenant, Node, Subnode } from '../../models/hierarchy.model';
+import { HierarchyService } from '../../services/hierarchy.service';
 
 @Component({
   selector: 'app-user-info',
@@ -28,10 +30,18 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './user-info.component.scss',
   imports: [
     FormsModule, AutofocusDirective, NgClass, EqualValidator, NgSelectComponent, NgLabelTemplateDirective,
-    NgOptionTemplateDirective, TranslateModule
+    NgOptionTemplateDirective, TranslateModule, CommonModule
   ]
 })
 export class UserInfoComponent implements OnInit {
+
+  tenants: Tenant[] = [];
+nodes: Node[] = [];
+subnodes: Subnode[] = [];
+
+public selectedTenantId: number = 0;
+public selectedNodeId: number = 0;
+
   private alertService = inject(AlertService);
   private accountService = inject(AccountService);
 
@@ -43,7 +53,8 @@ export class UserInfoComponent implements OnInit {
   public showValidationErrors = false;
   public uniqueId = Utilities.uniqueId();
   public user = new User();
-  public userEdit = new UserEdit();
+  public userEdit: UserEdit;
+  //public userEdit = new UserEdit();
   public allRoles: Role[] = [];
 
   public formResetToggle = true;
@@ -73,15 +84,69 @@ private authService = inject(AuthService);
   readonly confirmPassword = viewChild<NgModel>('confirmPassword');
 
   readonly roles = viewChild<NgModel>('roles');
-
+  constructor(private hierarchyService: HierarchyService,private cdr: ChangeDetectorRef) {
+    this.userEdit = new UserEdit();
+  }
   ngOnInit() {
     if (!this.isGeneralEditor) {
       this.loadCurrentUserData();
     }
 
     this.afterOnInit.emit(this);
+if (this.isEditMode) {
+  this.loadHierarchy().then(() => {
+    this.preselectHierarchy();
+  });
+} else {
+  this.loadHierarchy();
+}
+  }
+loadHierarchy(): Promise<void> {
+  return new Promise((resolve) => {
+    this.hierarchyService.getHierarchy().subscribe(data => {
+      this.tenants = data;
+      this.cdr.detectChanges();
+      resolve();
+    });
+  });
+}
+
+preselectHierarchy() {
+  const subnodeId = this.userEdit.subnodeId;
+
+  for (const tenant of this.tenants) {
+    for (const node of tenant.nodes) {
+      for (const subnode of node.subnodes) {
+        if (subnode.id === subnodeId) {
+          this.selectedTenantId = tenant.id;
+          this.nodes = tenant.nodes;
+          this.selectedNodeId = node.id;
+          this.subnodes = node.subnodes;
+          return;
+        }
+      }
+    }
   }
 
+  // fallback: nothing matched
+  this.selectedTenantId = 0;
+  this.selectedNodeId = 0;
+  this.subnodes = [];
+}
+
+onTenantChange() {
+  const tenant = this.tenants.find(t => t.id === +this.selectedTenantId);
+  this.nodes = tenant ? tenant.nodes : [];
+  this.selectedNodeId = 0;
+  this.subnodes = [];
+  this.userEdit.subnodeId = 0;
+}
+
+onNodeChange() {
+  const node = this.nodes.find(n => n.id === +this.selectedNodeId);
+  this.subnodes = node ? node.subnodes : [];
+  this.userEdit.subnodeId = 0;
+}
   private loadCurrentUserData() {
     this.alertService.startLoadingMessage();
 
@@ -105,6 +170,13 @@ private authService = inject(AuthService);
     this.user = user;
     this.allRoles = roles;
      Object.assign(this.userEdit, this.user);
+     if (this.tenants?.length) {
+      this.preselectHierarchy();
+    } else {
+      this.loadHierarchy().then(() => {
+        this.preselectHierarchy();
+      });
+    }
   }
 
   private onCurrentUserDataLoadFailed(error: HttpErrorResponse) {
@@ -372,6 +444,14 @@ private authService = inject(AuthService);
       Object.assign(this.userEdit, user);
       this.edit();
 
+if (this.tenants?.length) {
+      this.preselectHierarchy();
+    } else {
+      this.loadHierarchy().then(() => {
+        this.preselectHierarchy();
+      });
+    }
+
       return this.userEdit;
     } else {
       return this.newUser(allRoles);
@@ -398,10 +478,12 @@ private authService = inject(AuthService);
   }
 
   get canViewAllRoles() {
-    return this.accountService.userHasPermission(Permissions.viewRoles);
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.viewRoles);
   }
 
   get canAssignRoles() {
-    return this.accountService.userHasPermission(Permissions.assignRoles);
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.assignRoles);
   }
 }

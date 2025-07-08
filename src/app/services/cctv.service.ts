@@ -18,7 +18,7 @@ export class CctvService {
     return this.http.post(this.apiUrl +'/cctv/', cctvData);
   }
    // Method to fetch CCTV list from the API
-   getCctvs(): Observable<Todo[]> {
+   getCctvs(siteId: number | undefined): Observable<Todo[]> {
     return this.http.get<Todo[]>(this.apiUrl+'/cctv/');
   }
 

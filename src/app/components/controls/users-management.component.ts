@@ -225,15 +225,18 @@ export class UsersManagementComponent implements OnInit {
   }
 
   get canManageUsers() {
-    return this.accountService.userHasPermission(Permissions.manageUsers);
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.manageUsers);
   }
 
   get canAssignRoles() {
-    return this.accountService.userHasPermission(Permissions.assignRoles);
+    return this.accountService.isAdmin;
+    //return this.accountService.userHasPermission(Permissions.assignRoles);
   }
 
   get canViewRoles() {
-    return this.accountService.userHasPermission(Permissions.viewRoles);
+    return this.accountService.isAdmin ||  this.accountService.isUser;;
+    //return this.accountService.userHasPermission(Permissions.viewRoles);
   }
 }
 interface UserIndex extends User {

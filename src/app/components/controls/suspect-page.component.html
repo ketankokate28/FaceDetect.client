@@ -85,6 +85,42 @@
 
   <div class="modal-body">
     <form #f="ngForm" (ngSubmit)="saveSuspect()" novalidate>
+
+<fieldset class="border p-2 mb-3">
+  <legend class="w-auto px-2">Location</legend>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Tenant</label>
+<select class="form-control" [(ngModel)]="selectedTenantId" name="tenant_id" (change)="onTenantChange()" [disabled]="disableHierarchy">
+          <option *ngFor="let t of tenants" [value]="t.id">{{t.name}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Node</label>
+        <select class="form-control" [(ngModel)]="selectedNodeId" name="node_id" (change)="onNodeChange()" [disabled]="!nodes.length || disableHierarchy">
+          <option *ngFor="let n of nodes" [value]="n.id">{{n.name}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Subnode <span class="text-danger">*</span></label>
+        <select class="form-control" [(ngModel)]="suspectEdit.subnode_id" name="subnode_id" [disabled]="!subnodes.length || disableHierarchy" required (ngModelChange)="onSubnodeChange($event)">
+          <option [ngValue]="null" disabled selected>-- Select Subnode --</option>
+          <option *ngFor="let s of subnodes" [value]="s.id">{{s.name}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</fieldset>
+
+      
       <div class="row">
         <!-- First Name -->
         <div class="col-md-6">

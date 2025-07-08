@@ -4,7 +4,7 @@
 // (c) 2024 /mit-license
 // ---------------------------------------
 
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Cctv } from '../../models/cctv.model'; // The interface for CCTV
@@ -67,6 +67,7 @@ export class CctvViewComponent implements OnInit {
   loadingIndicator: boolean = true;
   rows: Cctv[] = [];
   rowsCache: Cctv[] = [];
+  @Input() siteId?: number;
   readonly verticalScrollbar = input(false);
   private authService = inject(AuthService);
   @ViewChild('editorModal') editorModal!: TemplateRef<any>; // This line is required
@@ -96,7 +97,7 @@ export class CctvViewComponent implements OnInit {
   }
 
   loadCctvs(): void {
-    this.cctvService.getCctvs().subscribe(
+    this.cctvService.getCctvs(this.siteId).subscribe(
       data => {
         this.rowsCache = [...data];  // Cache full data
         this.rows = [...data];       // Data to display
@@ -153,7 +154,11 @@ export class CctvViewComponent implements OnInit {
         }
       );
     } else {
-      this.cctvService.createCctv(this.cctvEdit).subscribe(
+      if (!this.siteId) {
+  console.error('siteId is required');
+  return;
+}
+      this.cctvService.createCctv(this.cctvEdit,this.siteId).subscribe(
         () => {
           this.loadCctvs();
           if (this.modalRef) {
@@ -213,11 +218,6 @@ export class CctvViewComponent implements OnInit {
     }
   }
 
-  // Method to open modal for editing a CCTV
-//   editCctv(row: Cctv): void {
-//     this.cctvEdit = { ...row }; // Copy the row data into the edit form
-//     this.modalService.open(this.editorModal, { size: 'lg' });
-//   }
 editCctv(row: Cctv): void {
     this.openEditor(row); // reuse the same logic
   }

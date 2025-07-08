@@ -15,9 +15,21 @@ export class CctvViewService {
   constructor(private http: HttpClient) { }
 
   // Get all CCTVs
-  getCctvs(): Observable<Cctv[]> {
-    return this.http.get<Cctv[]>(`${this.baseUrl}/cctv/`);
+  //getCctvs(siteId: number | undefined): Observable<Cctv[]> {
+    //return this.http.get<Cctv[]>(`${this.baseUrl}/cctv/`);
+  //}
+
+getCctvs(siteId?: number): Observable<Cctv[]> {
+  const params: { [param: string]: string } = {};
+  if (siteId !== undefined) {
+    params['siteId'] = siteId.toString();
   }
+
+  return this.http.get<Cctv[]>(`${this.baseUrl}/cctv/`, {
+    params
+  });
+}
+
 
   // Get a specific CCTV by ID (optional use)
   getCctv(id: number): Observable<Cctv> {
@@ -25,7 +37,8 @@ export class CctvViewService {
   }
 
   // Create a new CCTV
-  createCctv(cctv: Cctv): Observable<Cctv> {
+  createCctv(cctv: Cctv, siteId: number): Observable<Cctv> {
+     cctv.siteId = siteId;
     return this.http.post<Cctv>(`${this.baseUrl}/cctv/`, cctv);
   }
 

@@ -31,4 +31,5 @@ export interface IdToken {
   fullname: string;
   jobtitle: string;
   configuration: string;
+  subnode: number;
 }

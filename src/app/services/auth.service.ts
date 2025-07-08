@@ -148,10 +148,10 @@ export class AuthService {
       decodedIdToken.email,
       decodedIdToken.jobtitle,
       decodedIdToken.phone_number,
-      Array.isArray(decodedIdToken.role) ? decodedIdToken.role : [decodedIdToken.role]);
+      Array.isArray(decodedIdToken.role) ? decodedIdToken.role : [decodedIdToken.role],
+      decodedIdToken.subnode);
 
     user.isEnabled = true;
-
     this.saveUserDetails(user, permissions, accessToken, refreshToken, accessTokenExpiry, rememberMe);
 
     this.reevaluateLoginStatus(user);

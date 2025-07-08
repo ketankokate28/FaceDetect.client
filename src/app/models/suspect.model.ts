@@ -31,4 +31,5 @@ export interface Suspect {
   image?: File;  // only for frontend image upload
   $$index?: number; // Add the $$index field to your interface
   file_blob_base64?: string;
+  subnode_id?: number;
 }

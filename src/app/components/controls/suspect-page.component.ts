@@ -15,6 +15,9 @@ import { AutofocusDirective } from '../../directives/autofocus.directive';
 import { SuspectService } from '../../services/suspect.service'; // Import the service
 import { Suspect } from '../../models/suspect.model';
 import { ChangeDetectorRef } from '@angular/core';
+import { Subnode,Node, Tenant } from '../../models/hierarchy.model';
+import { HierarchyService } from '../../services/hierarchy.service';
+import { AccountService } from '../../services/account.service';
 @Component({
   selector: 'app-suspect-page',
   templateUrl: './suspect-page.component.html',
@@ -67,36 +70,108 @@ uploadedImages: { [key: number]: string | Blob } = {};
 modalImageUrl: string | null = null;
 showImageModal: boolean = false;
 
+tenants: Tenant[] = [];
+nodes: Node[] = [];
+subnodes: Subnode[] = [];
+selectedTenantId: number = 0;
+selectedNodeId: number = 0;
+disableHierarchy: boolean = false;
   @ViewChild('imagePreviewModal') imagePreviewModal: any;
   private authService = inject(AuthService);
   constructor(
     private modalService: NgbModal,
     private suspectService: SuspectService, // Service to interact with the backend API
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private hierarchyService: HierarchyService,
+    private accountService: AccountService
   ) { }
 
   ngOnInit(): void {
-    this.loadSuspects();
+  this.loadSuspects();
+
+   const userSubnodeId = this.accountService.currentUser?.subnodeId;
+
+  if (userSubnodeId && userSubnodeId > 0) {
+    this.disableHierarchy = true;
   }
 
-  // Load all suspects data from backend
-  loadSuspects(): void {
-    this.suspectService.getSuspects().subscribe(
-      data => {
-        this.rowsCache = [...data];  // Cache full data
-        this.rows = [...data];       // Data to display
-        this.loadingIndicator = false;
-      },
-      error => {
-        console.error('Error loading Suspect data:', error);
-        this.loadingIndicator = false;
-        if(error?.error?.msg =="Token has expired")
-        {
-          this.authService.reLogin();
+  this.loadHierarchy().then(() => {
+    if (this.disableHierarchy && userSubnodeId) {
+      this.preselectHierarchy(userSubnodeId);
+    } else if (this.suspectEdit.subnode_id) {
+      this.preselectHierarchy(this.suspectEdit.subnode_id);
+    }
+  });
+}
+
+
+loadHierarchy(): Promise<void> {
+  return new Promise(resolve => {
+    this.hierarchyService.getHierarchy().subscribe(data => {
+      this.tenants = data;
+      resolve();
+      this.cdRef.detectChanges();
+    });
+  });
+}
+
+preselectHierarchy(subnodeId: number): boolean {
+  for (const tenant of this.tenants) {
+    for (const node of tenant.nodes) {
+      for (const subnode of node.subnodes) {
+        if (subnode.id === subnodeId) {
+          this.selectedTenantId = tenant.id;
+          this.nodes = tenant.nodes;
+          this.selectedNodeId = node.id;
+          this.subnodes = node.subnodes;
+          this.suspectEdit.subnode_id = subnodeId;
+          return true;
         }
       }
-    );
+    }
   }
+
+  this.selectedTenantId = 0;
+  this.selectedNodeId = 0;
+  this.subnodes = [];
+  return false;
+}
+
+
+
+onTenantChange() {
+  const tenant = this.tenants.find(t => t.id === +this.selectedTenantId);
+  this.nodes = tenant ? tenant.nodes : [];
+  this.selectedNodeId = 0;
+  this.subnodes = [];
+  this.suspectEdit.subnode_id = 0;
+}
+
+onNodeChange() {
+  const node = this.nodes.find(n => n.id === +this.selectedNodeId);
+  this.subnodes = node ? node.subnodes : [];
+  this.suspectEdit.subnode_id = 0;
+}
+  // Load all suspects data from backend
+loadSuspects(): void {
+  const subnodeId = this.accountService.currentUser?.subnodeId || 0;
+
+  this.suspectService.getSuspects(subnodeId).subscribe(
+    data => {
+      this.rowsCache = [...data];  // Cache full data
+      this.rows = [...data];       // Data to display
+      this.loadingIndicator = false;
+    },
+    error => {
+      console.error('Error loading Suspect data:', error);
+      this.loadingIndicator = false;
+      if (error?.error?.msg === "Token has expired") {
+        this.authService.reLogin();
+      }
+    }
+  );
+}
+
 handleMultiImageUpload(event: any, index: number): void {
   const file = event.target.files[0];
   if (file) {
@@ -123,15 +198,48 @@ handleMultiImageUpload(event: any, index: number): void {
   }
 
   // Open modal for adding or editing Suspect
-  openEditor(row?: Suspect) {
-    this.suspectEdit = row ? { ...row } : {} as Suspect;
+ openEditor(row?: Suspect) {
+  this.suspectEdit = row ? { ...row } : {} as Suspect;
+
+  if (!row) {
+    this.selectedTenantId = 0;
+    this.selectedNodeId = 0;
+    this.subnodes = [];
+  }
+
+  const loggedInSubnodeId = this.accountService.currentUser?.subnodeId ?? 0;
+  let targetSubnodeId = 0;
+
+  if (row?.subnode_id && row.subnode_id > 0) {
+    targetSubnodeId = row.subnode_id;
+  } else if (loggedInSubnodeId > 0) {
+    targetSubnodeId = loggedInSubnodeId;
+  }
+
+  this.loadHierarchy().then(() => {
+    if (targetSubnodeId > 0) {
+      const found = this.preselectHierarchy(targetSubnodeId);
+      if (found) {
+        // ✅ If the logged-in user is Admin (subnodeId = 0), keep dropdown enabled
+        this.disableHierarchy = loggedInSubnodeId > 0;
+      } else {
+        this.disableHierarchy = false; // invalid id → leave enabled
+      }
+    } else {
+      this.disableHierarchy = false;   // no subnode id anywhere → leave enabled
+    }
+  });
+
   this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });
+
   if (row?.file_blob_base64) {
-    this.previewImage = `data:image/jpeg;base64,${row?.file_blob_base64}`;
+    this.previewImage = `data:image/jpeg;base64,${row.file_blob_base64}`;
   } else {
-    this.previewImage = null; // Ensure no image if not available
+    this.previewImage = null;
   }
-  }
+}
+
+
 
   // Method to handle file image upload
   handleImageUpload(event: any): void {
@@ -160,9 +268,27 @@ handleMultiImageUpload(event: any, index: number): void {
   this.uploadedImages = {}; // Clear any existing uploaded images
     this.showImageModal = false;
   this.modalImageUrl = null;
-    this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });
+
+    const userSubnodeId = this.accountService.currentUser?.subnodeId;
+
+  if (userSubnodeId && userSubnodeId > 0) {
+    this.disableHierarchy = true;
+    this.preselectHierarchy(userSubnodeId);
+  } else {
+    this.disableHierarchy = false;
+    this.selectedTenantId = 0;
+    this.selectedNodeId = 0;
+    this.subnodes = [];
   }
 
+
+    this.modalRef = this.modalService.open(this.editorModal, { size: 'lg' });
+  }
+onSubnodeChange(id: number) {
+  if (!this.disableHierarchy) {
+    this.suspectEdit.subnode_id = id;
+  }
+}
   saveSuspect(): void {
     
     // if (!this.suspectEdit.firstName) {
@@ -179,6 +305,23 @@ handleMultiImageUpload(event: any, index: number): void {
     return;
   }
 
+
+   let targetSubnodeId = this.suspectEdit.subnode_id ?? 0;
+
+  if (!targetSubnodeId) {
+    // Try to pick from selected subnodes
+    const selected = this.subnodes.find(s => s.id === this.suspectEdit.subnode_id);
+    if (selected) {
+      targetSubnodeId = selected.id;
+    }
+  }
+
+  if (!targetSubnodeId && this.disableHierarchy) {
+    // fallback to logged-in user’s subnode
+    targetSubnodeId = this.accountService.currentUser?.subnodeId ?? 0;
+  }
+
+  this.suspectEdit.subnode_id = targetSubnodeId || undefined;
   // if (!this.imageFiles[1]) {
   //   alert("Image 1 is required.");
   //   return;

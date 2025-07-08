@@ -12,7 +12,8 @@ export class User {
     public email = '',
     public jobTitle = '',
     public phoneNumber = '',
-    roles: string[] = [],  
+    roles: string[] = [],
+     public subnodeId: number = 0,
 
   ) {
     if (roles)

@@ -29,13 +29,15 @@ export class SuspectService {
     return this.http.put<Suspect>(`${this.apiUrl}/${id}`, formData);
   }
 
-  getSuspects(): Observable<Suspect[]> {
-    return this.http.get<any[]>(this.apiUrl + '/').pipe(
-      map((response: any[]) =>
-        response.map(item => this.mapToSuspectModel(item))
-      )
-    );
-  }
+getSuspects(subnodeId: number): Observable<Suspect[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/`, {
+    params: { subnode_id: subnodeId }
+  }).pipe(
+    map((response: any[]) =>
+      response.map(item => this.mapToSuspectModel(item))
+    )
+  );
+}
 
   uploadSuspectImages(suspectId: number, formData: FormData) {
   return this.http.post(`${this.apiUrl}/${suspectId}/upload-images`, formData);
@@ -47,6 +49,7 @@ export class SuspectService {
   private mapToSuspectModel(item: any): Suspect {
     return {
       id: item.suspect_id,
+      subnode_id: item.subnode_id,
       firstName: item.first_name,
       lastName: item.last_name,
       dateOfBirth: item.date_of_birth,
@@ -115,6 +118,7 @@ export class SuspectService {
     safeAppend('created_by', suspect.createdBy);
     safeAppend('modified_by', suspect.modifiedBy);
         safeAppend('description', suspect.description);
+      safeAppend('subnode_id', suspect.subnode_id);   
   
     // Image file
     if (suspect.image instanceof File) {

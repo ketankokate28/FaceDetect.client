@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { ConfigurationService } from '../../services/configuration.service';
 import { Utilities } from '../../services/utilities';
 import { UserLogin } from '../../models/user-login.model';
+import { HierarchyService } from '../../services/hierarchy.service';
 
 @Component({
     selector: 'app-login',
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private alertService = inject(AlertService);
   private authService = inject(AuthService);
   private configurations = inject(ConfigurationService);
-
+  private hierarchyService = inject(HierarchyService); 
   userLogin = new UserLogin();
   isLoading = false;
   formResetToggle = true;
@@ -79,6 +80,16 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.alertService.stopLoadingMessage();
             this.isLoading = false;
             this.reset();
+
+
+this.hierarchyService.getHierarchy(true).subscribe({
+      next: hierarchy => {
+        console.log('Hierarchy loaded after login', hierarchy);
+      },
+      error: err => {
+        console.error('Failed to load hierarchy after login', err);
+      }
+    });
 
             if (!this.isModal) {
               this.alertService.showMessage('Login', `Welcome ${user.userName}!`, MessageSeverity.success);
