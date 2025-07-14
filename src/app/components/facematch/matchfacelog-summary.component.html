@@ -16,7 +16,11 @@
   </div>
 
 </div>
-
+<div *ngIf="loadingIndicator" class="loader-overlay">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
   <ngx-datatable
     class="material colored-header sm table-hover"
     [loadingIndicator]="loadingIndicator"
@@ -56,6 +60,11 @@
       </div>
 
       <div class="modal-body">
+  <div *ngIf="isIncidentLoading" class="text-center my-3">
+    <div class="spinner-border"></div> Loading incidents...
+  </div>
+
+        <div *ngIf="!isIncidentLoading">
         <div class="table-responsive">
           <table class="table table-striped table-bordered table-hover table-sm">
             <thead class="thead-dark">
@@ -69,7 +78,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let log of incidentLogs; let i = index" (click)="openImage(log,imageViewer)">
+              <tr *ngFor="let log of incidentLogs; let i = index">
                 <td>
                   <a href="#" style="text-decoration: underline; color: #007bff;" (click)="openImage(log,imageViewer); $event.preventDefault()">
                      {{ getFileNameWithoutExtension(log.frame) }}
@@ -85,10 +94,10 @@
             </tbody>
           </table>
         </div>
+        </div>
       </div>
     </div>
 </ng-template>
-
 <ng-template #imageViewer let-modal>
 <div class="d-flex w-100 justify-content-between align-items-center">
   <!-- Title on the left -->
@@ -101,11 +110,9 @@
     Captured on: {{ selectedCaptureDate | date: 'short' }}
   </small>
    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
- 
-      
- 
 </div>
- <div class="d-flex justify-content-center w-100 mt-2">
+
+<div class="d-flex justify-content-center w-100 mt-2">
     <button class="btn btn-sm btn-outline-primary me-2" (click)="toggleFullScreen()">
       <i class="bi bi-arrows-fullscreen"></i> {{ isFullscreen ? 'Exit Fullscreen' : 'Fullscreen' }}
     </button>
@@ -118,45 +125,53 @@
     <button class="btn btn-sm btn-outline-dark" (click)="rotateImages()">
       <i class="bi bi-arrow-clockwise"></i> Rotate
     </button>
+</div>
+
+<div class="modal-body position-relative">
+
+  <!-- 🔷 Add loading indicator here -->
+  <div *ngIf="isImageLoading" class="overlay">
+    <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div>Loading image…</div>
   </div>
 
-  <div class="modal-body">
-
-    <div class="row">
-      <!-- Suspect Image -->
-      <div class="col-md-6 text-center">
-        <h6 class="mb-2">Suspect Photo</h6>
-        
-        <img
-  *ngIf="suspectPhoto"
-  [src]="'data:image/jpeg;base64,' + suspectPhoto"
-  alt="Suspect Photo"
-  class="img-fluid border rounded shadow-sm"
-  [style.transform]="imageRotation"
-  style="max-height: 70vh; object-fit: contain; cursor: zoom-in;"
- (click)="openViewerForImage($event)"
-/>
-        <div *ngIf="!suspectPhoto" class="text-muted">No suspect photo available.</div>
-      </div>
-
-      <!-- Divider -->
-      <div class="col-md-1 d-flex align-items-center justify-content-center">
-        <div style="width: 1px; height: 100%; background-color: #ccc;"></div>
-      </div>
-
-      <!-- Captured Frame -->
-      <div class="col-md-5 text-center">
-        <h6 class="mb-2">Captured Frame</h6>
+  <div class="row" *ngIf="!isImageLoading">
+    <!-- Suspect Image -->
+    <div class="col-md-6 text-center">
+      <h6 class="mb-2">Suspect Photo</h6>
       <img
-  *ngIf="selectedImageUrl"
-  [src]="selectedImageUrl"
-  alt="Captured Frame"
-  class="img-fluid border rounded shadow-sm"
-  [style.transform]="imageRotation"
-  style="max-height: 70vh; object-fit: contain; cursor: zoom-in;"
- (click)="openViewerForImage($event)"
-/>
-      </div>
+        *ngIf="suspectPhoto"
+        [src]="'data:image/jpeg;base64,' + suspectPhoto"
+        alt="Suspect Photo"
+        class="img-fluid border rounded shadow-sm"
+        [style.transform]="imageRotation"
+        style="max-height: 70vh; object-fit: contain; cursor: zoom-in;"
+        (click)="openViewerForImage($event)"
+      />
+      <div *ngIf="!suspectPhoto" class="text-muted">No suspect photo available.</div>
+    </div>
+
+    <!-- Divider -->
+    <div class="col-md-1 d-flex align-items-center justify-content-center">
+      <div style="width: 1px; height: 100%; background-color: #ccc;"></div>
+    </div>
+
+    <!-- Captured Frame -->
+    <div class="col-md-5 text-center">
+      <h6 class="mb-2">Captured Frame</h6>
+      <img
+        *ngIf="selectedImageUrl"
+        [src]="selectedImageUrl"
+        alt="Captured Frame"
+        class="img-fluid border rounded shadow-sm"
+        [style.transform]="imageRotation"
+        style="max-height: 70vh; object-fit: contain; cursor: zoom-in;"
+        (click)="openViewerForImage($event)"
+      />
     </div>
   </div>
+</div>
 </ng-template>
+

@@ -36,4 +36,9 @@ export class MatchFaceLogService {
 getIncidentsBySuspect(suspectId: number): Observable<{ logs: any[], suspectPhoto: string }> {
   return this.http.get<{ logs: any[], suspectPhoto: string }>(`${this.baseUrl}/suspect/${suspectId}`);
 }
+
+getLogById(logId: number) {
+  return this.http.get<any>(`${this.baseUrl}/log/${logId}`);
+}
+
 }

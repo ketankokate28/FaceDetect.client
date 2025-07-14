@@ -34,7 +34,8 @@ isFullscreen: boolean = false; // Track fullscreen state
 private authService = inject(AuthService);
 selectedImageUrl: string = '';
 rootImagePath = 'C:/Ketan/R&D/flask-backend-api/matched_faces'; // <-- Update this to your actual root path
-
+isImageLoading = false;
+isIncidentLoading =false;
 @ViewChild('incidentModal') incidentModal!: TemplateRef<any>;
 columns = [
   { name: 'Suspect ID', prop: 'suspectId' },
@@ -95,12 +96,41 @@ closeImageViewer(modal: any): void {
 //   // suspectPhoto already set from openIncidentPopup
 //   this.modalService.open(this.imageViewer, { size: 'xl', centered: true });
 // }
-openImage(log: any, imageViewerModal: any): void {
-  this.selectedImageUrl = `data:image/jpeg;base64,${log.frameBase64}`;
-  this.selectedCaptureDate = log.captureTime;  // Set capture date
-  const modalRef = this.modalService.open(imageViewerModal, { size: 'xl', centered: true });
+
+
+// openImage(log: any, imageViewerModal: any): void {
+//   this.selectedImageUrl = `data:image/jpeg;base64,${log.frameBase64}`;
+//   this.selectedCaptureDate = log.captureTime;  // Set capture date
+//   const modalRef = this.modalService.open(imageViewerModal, { size: 'xl', centered: true });
    
+// }
+
+openImage(log: any, imageViewerModal: any): void {
+  this.isImageLoading = true;
+  this.selectedImageUrl = '';    // clear old image
+  this.selectedCaptureDate = ''; // clear old date
+
+  // open modal immediately
+  const modalRef = this.modalService.open(imageViewerModal, { size: 'xl', centered: true });
+
+  this.service.getLogById(log.id).subscribe({
+    next: (data) => {
+      this.selectedImageUrl = `data:image/jpeg;base64,${data.frameBase64}`;
+      this.selectedCaptureDate = data.captureTime;
+      this.isImageLoading = false;
+    },
+    error: (err) => {
+      console.error('Failed to fetch log by ID:', err);
+      this.isImageLoading = false;
+      if (err?.error?.msg === 'Token has expired') {
+        this.authService.reLogin();
+      }
+    }
+  });
 }
+
+
+
 openViewerForImage(event: MouseEvent): void {
   const imgElement = event.target as HTMLImageElement;
 
@@ -134,21 +164,28 @@ openIncidentPopup(suspectId: number, suspectName: string, event: MouseEvent): vo
   event.preventDefault();  // prevent <a> default behavior
   this.selectedSuspectName = suspectName;
 
-this.service.getIncidentsBySuspect(suspectId).subscribe({
-  next: (data) => {
-    this.incidentLogs = data.logs;          // ✅ Valid now
-    this.suspectPhoto = data.suspectPhoto;  // Optional usage
-    this.modalService.open(this.incidentModal, { size: 'lg' });
-  },
-  error: (err) => {
-    console.error('Failed to load incidents:', err);
-        if(err?.error?.msg =="Token has expired")
-        {
-          this.authService.reLogin();
-        }
-  }
-});
+  this.isIncidentLoading = true; // start loader
+  this.incidentLogs = [];        // clear old data
+  this.suspectPhoto = '';
+
+  this.modalService.open(this.incidentModal, { size: 'lg' }); // open modal immediately
+
+  this.service.getIncidentsBySuspect(suspectId).subscribe({
+    next: (data) => {
+      this.incidentLogs = data.logs;
+      this.suspectPhoto = data.suspectPhoto;
+      this.isIncidentLoading = false; // stop loader
+    },
+    error: (err) => {
+      console.error('Failed to load incidents:', err);
+      this.isIncidentLoading = false;
+      if (err?.error?.msg === 'Token has expired') {
+        this.authService.reLogin();
+      }
+    }
+  });
 }
+
   onSearchChanged(searchValue: string): void {
     const term = searchValue.toLowerCase();
     this.rows = this.rowsCache.filter(r =>
