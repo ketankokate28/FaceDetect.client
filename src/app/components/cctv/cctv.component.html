@@ -4,39 +4,41 @@
 
 <div *ngIf="!showCamerasForSiteId">
 
-  <div class="d-flex justify-content-between mb-2">
+  <div class="d-flex justify-content-between flex-wrap mb-2">
     <h5>Sites</h5>
-    <button class="btn btn-primary btn-sm" (click)="addSite()">
+    <button class="btn btn-primary btn-sm mt-2 mt-md-0" (click)="addSite()">
       <i class="fa fa-plus"></i> Add Site
     </button>
   </div>
 
-  <table class="table table-bordered table-sm">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Address</th>
-        <th>DVR IP</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let site of sites">
-        <td>{{site.name}}</td>
-        <td>{{site.description}}</td>
-        <td>{{site.address}}</td>
-        <td>{{site.dvr_ip}}</td>
-        <td>
-          <button class="btn btn-sm btn-info" (click)="editSite(site)">Edit</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteSite(site)">Delete</button>
-          <button class="btn btn-sm btn-primary" (click)="showCameras(site.id!)">
-            Add/Edit Cameras
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-bordered table-sm mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Address</th>
+          <th>DVR IP</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let site of sites">
+          <td>{{site.name}}</td>
+          <td>{{site.description}}</td>
+          <td>{{site.address}}</td>
+          <td>{{site.dvr_ip}}</td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="editSite(site)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteSite(site)">Delete</button>
+            <button class="btn btn-sm btn-primary" (click)="showCameras(site.id!)">
+              Add/Edit Cameras
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
@@ -49,146 +51,137 @@
 </div>
 
 <ng-template #siteModal let-modal>
- <div class="modal-dialog modal-xl custom-wide-modal">
+  <div class="modal-dialog modal-xl custom-wide-modal">
     <div class="modal-content">
 
-  <div class="modal-header">
-    <h5 class="modal-title">{{siteEdit.id ? 'Edit Site' : 'Add Site'}}</h5>
-    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
-  </div>
-  <div class="modal-body" >
-<form #siteForm="ngForm" (ngSubmit)="saveSite()">
-  
-  
-<fieldset class="border p-2 mb-3">
-  <legend class="w-auto px-2">Site Location</legend>
-
-  <div class="row">
-    <div class="col-md-4">
-      <div class="form-group">
-        <label>Tenant</label>
-        <select class="form-control" [(ngModel)]="selectedTenantId" name="tenant_id" (change)="onTenantChange()">
-          <option *ngFor="let t of tenants" [value]="t.id">{{t.name}}</option>
-        </select>
+      <div class="modal-header">
+        <h5 class="modal-title">{{siteEdit.id ? 'Edit Site' : 'Add Site'}}</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
       </div>
-    </div>
 
-    <div class="col-md-4">
-      <div class="form-group">
-        <label>Node</label>
-        <select class="form-control" [(ngModel)]="selectedNodeId" name="node_id" (change)="onNodeChange()" [disabled]="!nodes.length">
-          <option *ngFor="let n of nodes" [value]="n.id">{{n.name}}</option>
-        </select>
-      </div>
-    </div>
+      <form #siteForm="ngForm" (ngSubmit)="saveSite()">
+        <div class="modal-body">
 
-    <div class="col-md-4">
-      <div class="form-group">
-  <label>Subnode <span class="text-danger">*</span></label>
-  <select 
-    class="form-control" 
-    [(ngModel)]="siteEdit.subnode_id" 
-    name="subnode_id" 
-    [disabled]="!subnodes.length"
-    required>
-    <option [ngValue]="null" disabled selected>-- Select Subnode --</option>
-    <option *ngFor="let s of subnodes" [value]="s.id">{{s.name}}</option>
-  </select>
-</div>
-    </div>
-  </div>
-</fieldset>
+          <fieldset class="border p-2 mb-3">
+            <legend class="w-auto px-2">Site Location</legend>
 
-  <div class="modal-body">
-    <div class="row">
-      <div class="form-group col-md-6">
-        <label>Name</label>
-        <input type="text" [(ngModel)]="siteEdit.name" name="name" class="form-control" required />
-      </div>
-      <div class="form-group col-md-6">
-        <label>Description</label>
-        <textarea [(ngModel)]="siteEdit.description" name="description" class="form-control" rows="1"></textarea>
-      </div>
-    </div>
+            <div class="row">
+              <div class="col-12 col-md-4">
+                <div class="form-group">
+                  <label>Tenant</label>
+                  <select class="form-control" [(ngModel)]="selectedTenantId" name="tenant_id" (change)="onTenantChange()">
+                    <option *ngFor="let t of tenants" [value]="t.id">{{t.name}}</option>
+                  </select>
+                </div>
+              </div>
 
-    <div class="row">
-      <div class="form-group col-md-6">
-        <label>Address</label>
-        <input type="text" [(ngModel)]="siteEdit.address" name="address" class="form-control" />
-      </div>
-      <div class="form-group col-md-6">
-        <label>Latitude</label>
-        <input type="text" [(ngModel)]="siteEdit.latitude" name="latitude" class="form-control" />
-      </div>
-    </div>
+              <div class="col-12 col-md-4">
+                <div class="form-group">
+                  <label>Node</label>
+                  <select class="form-control" [(ngModel)]="selectedNodeId" name="node_id" (change)="onNodeChange()" [disabled]="!nodes.length">
+                    <option *ngFor="let n of nodes" [value]="n.id">{{n.name}}</option>
+                  </select>
+                </div>
+              </div>
 
-    <div class="row">
-      <div class="form-group col-md-6">
-        <label>Longitude</label>
-        <input type="text" [(ngModel)]="siteEdit.longitude" name="longitude" class="form-control" />
-      </div>
-    </div>
+              <div class="col-12 col-md-4">
+                <div class="form-group">
+                  <label>Subnode <span class="text-danger">*</span></label>
+                  <select class="form-control" [(ngModel)]="siteEdit.subnode_id" name="subnode_id" [disabled]="!subnodes.length" required>
+                    <option [ngValue]="null" disabled selected>-- Select Subnode --</option>
+                    <option *ngFor="let s of subnodes" [value]="s.id">{{s.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </fieldset>
 
-    <!-- DVR Section -->
-    <fieldset class="border p-2 mt-3">
-      <legend class="w-auto px-2">DVR Details</legend>
+          <div class="row">
+            <div class="form-group col-12 col-md-6">
+              <label>Name</label>
+              <input type="text" [(ngModel)]="siteEdit.name" name="name" class="form-control" required />
+            </div>
+            <div class="form-group col-12 col-md-6">
+              <label>Description</label>
+              <textarea [(ngModel)]="siteEdit.description" name="description" class="form-control" rows="1"></textarea>
+            </div>
+          </div>
 
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label>DVR IP</label>
-          <input type="text" [(ngModel)]="siteEdit.dvr_ip" name="dvr_ip" class="form-control" />
+          <div class="row">
+            <div class="form-group col-12 col-md-6">
+              <label>Address</label>
+              <input type="text" [(ngModel)]="siteEdit.address" name="address" class="form-control" />
+            </div>
+            <div class="form-group col-12 col-md-6">
+              <label>Latitude</label>
+              <input type="text" [(ngModel)]="siteEdit.latitude" name="latitude" class="form-control" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-12 col-md-6">
+              <label>Longitude</label>
+              <input type="text" [(ngModel)]="siteEdit.longitude" name="longitude" class="form-control" />
+            </div>
+          </div>
+
+          <fieldset class="border p-2 mt-3">
+            <legend class="w-auto px-2">DVR Details</legend>
+
+            <div class="row">
+              <div class="form-group col-12 col-md-6">
+                <label>DVR IP</label>
+                <input type="text" [(ngModel)]="siteEdit.dvr_ip" name="dvr_ip" class="form-control" />
+              </div>
+              <div class="form-group col-12 col-md-6">
+                <label>DVR Port</label>
+                <input type="number" [(ngModel)]="siteEdit.dvr_port" name="dvr_port" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group col-12 col-md-6">
+                <label>DVR Username</label>
+                <input type="text" [(ngModel)]="siteEdit.dvr_username" name="dvr_username" class="form-control" />
+              </div>
+              <div class="form-group col-12 col-md-6">
+                <label>DVR Password</label>
+                <input type="password" [(ngModel)]="siteEdit.dvr_password" name="dvr_password" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group col-12 col-md-6">
+                <label>DVR RTSP URL</label>
+                <input type="text" [(ngModel)]="siteEdit.dvr_rtsp_url" name="dvr_rtsp_url" class="form-control" />
+              </div>
+              <div class="form-group col-12 col-md-6">
+                <label>DVR Model</label>
+                <input type="text" [(ngModel)]="siteEdit.dvr_model" name="dvr_model" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group col-12 col-md-6">
+                <label>DVR Vendor</label>
+                <input type="text" [(ngModel)]="siteEdit.dvr_vendor" name="dvr_vendor" class="form-control" />
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-check mt-3">
+            <input type="checkbox" [(ngModel)]="siteEdit.is_active" name="is_active" class="form-check-input" id="is_active" />
+            <label class="form-check-label" for="is_active">Active</label>
+          </div>
+
         </div>
-        <div class="form-group col-md-6">
-          <label>DVR Port</label>
-          <input type="number" [(ngModel)]="siteEdit.dvr_port" name="dvr_port" class="form-control" />
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label>DVR Username</label>
-          <input type="text" [(ngModel)]="siteEdit.dvr_username" name="dvr_username" class="form-control" />
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="siteForm.invalid">Save</button>
         </div>
-        <div class="form-group col-md-6">
-          <label>DVR Password</label>
-          <input type="password" [(ngModel)]="siteEdit.dvr_password" name="dvr_password" class="form-control" />
-        </div>
-      </div>
+      </form>
 
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label>DVR RTSP URL</label>
-          <input type="text" [(ngModel)]="siteEdit.dvr_rtsp_url" name="dvr_rtsp_url" class="form-control" />
-        </div>
-        <div class="form-group col-md-6">
-          <label>DVR Model</label>
-          <input type="text" [(ngModel)]="siteEdit.dvr_model" name="dvr_model" class="form-control" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group col-md-6">
-          <label>DVR Vendor</label>
-          <input type="text" [(ngModel)]="siteEdit.dvr_vendor" name="dvr_vendor" class="form-control" />
-        </div>
-      </div>
-    </fieldset>
-
-    <div class="form-check mt-3">
-      <input type="checkbox" [(ngModel)]="siteEdit.is_active" name="is_active" class="form-check-input" id="is_active" />
-      <label class="form-check-label" for="is_active">Active</label>
     </div>
-  </div>
-
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Cancel</button>
-    <button type="submit" class="btn btn-primary" [disabled]="siteForm.invalid">Save</button>
-  </div>
-</form>
-
-
-
-  </div>
-  </div>
   </div>
 </ng-template>
