@@ -394,11 +394,11 @@ if (!hasImage) {
   this.suspectService.getSuspectById(Number(suspect.id)).subscribe(response => {
     // If the response contains base64, assign it to uploadedImages
     this.uploadedImages = {
-      1: response.file_blob1_base64 || (response.file_path ? this.convertToBase64(response.file_path) : null),
-      2: response.file_blob2_base64 || (response.file_path2 ? this.convertToBase64(response.file_path2) : null),
-      3: response.file_blob3_base64 || (response.file_path3 ? this.convertToBase64(response.file_path3) : null),
-      4: response.file_blob4_base64 || (response.file_path4 ? this.convertToBase64(response.file_path4) : null),
-      5: response.file_blob5_base64 || (response.file_path5 ? this.convertToBase64(response.file_path5) : null)
+      1: response.file_blob1 || (response.file_path1 ? this.convertToBase64(response.file_blob1) : null),
+      2: response.file_blob2 || (response.file_path2 ? this.convertToBase64(response.file_blob2) : null),
+      3: response.file_blob3 || (response.file_path3 ? this.convertToBase64(response.file_blob3) : null),
+      4: response.file_blob4 || (response.file_path4 ? this.convertToBase64(response.file_blob4) : null),
+      5: response.file_blob5 || (response.file_path5 ? this.convertToBase64(response.file_blob5) : null)
     };
   this.showImageModal = false;
   this.modalImageUrl = null;
